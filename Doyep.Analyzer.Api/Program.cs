@@ -1,5 +1,5 @@
 using Doyep.Analyzer.Application.Strava;
-using Doyep.Analyzer.Infrastructure.Strava;
+using Doyep.Analyzer.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,11 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services
     .AddOpenApi()
-    .Configure<StravaOptions>(builder.Configuration.GetSection("Strava"))
-    .AddHttpClient<IStravaService, StravaService>(client =>
-    {
-        client.BaseAddress = new Uri("https://www.strava.com/api/v3");
-    });
+    .AddStravaService(builder.Configuration);
 
 var app = builder.Build();
 
@@ -27,6 +23,5 @@ app.MapGet("/strava/token/{code}", async (string code, IStravaService strava) =>
 {
     return await strava.ExchangeToken(code);
 });
-
 
 app.Run();
