@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services
     .AddOpenApi()
-    .AddStravaService(builder.Configuration);
+    .AddStrava(builder.Configuration);
 
 var app = builder.Build();
 
@@ -19,7 +19,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/strava/token/{code}", async (string code, IStravaService strava) =>
+app.MapGet("/strava/token/{code}", async (string code, IStravaAuthenticationService strava) =>
 {
     return await strava.ExchangeToken(code);
 });

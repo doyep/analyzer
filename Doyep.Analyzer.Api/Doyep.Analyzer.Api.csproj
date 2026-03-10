@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Doyep.Analyzer.Domain\Doyep.Analyzer.Domain.csproj" />
+    <ProjectReference Include="..\Doyep.Analyzer.Application\Doyep.Analyzer.Application.csproj" />
     <ProjectReference Include="..\Doyep.Analyzer.Infrastructure\Doyep.Analyzer.Infrastructure.csproj" />
   </ItemGroup>
 

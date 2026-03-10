@@ -3,12 +3,12 @@ using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Infrastructure.Strava;
 
-public class StravaService : IStravaService
+public class StravaAuthenticationService : IStravaAuthenticationService
 {
     private readonly HttpClient _httpClient;
     private readonly StravaOptions _options;
 
-    public StravaService(HttpClient httpClient, IOptions<StravaOptions> options)
+    public StravaAuthenticationService(HttpClient httpClient, IOptions<StravaOptions> options)
     {
         _httpClient = httpClient;
         _options = options.Value;
