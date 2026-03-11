@@ -1,5 +1,7 @@
-using Doyep.Analyzer.Application.Strava;
+using Scalar.AspNetCore;
+
 using Doyep.Analyzer.Infrastructure;
+using Doyep.Analyzer.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,13 +17,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
 }
 
 app.UseHttpsRedirection();
 
-app.MapGet("/strava/token/{code}", async (string code, IStravaAuthenticationService strava) =>
-{
-    return await strava.ExchangeToken(code);
-});
+app.MapAuthEndpoints();
 
 app.Run();

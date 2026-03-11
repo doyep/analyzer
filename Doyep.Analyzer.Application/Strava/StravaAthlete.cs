@@ -1,0 +1,21 @@
+namespace Doyep.Analyzer.Application.Strava;
+
+/// <summary>
+/// Represents a summary of athlete information
+/// </summary>
+public record SummaryAthlete(
+    long Id,
+    int ResourceState,
+    string Firstname,
+    string Lastname,
+    string ProfileMedium,
+    string Profile,
+    string City,
+    string State,
+    string Country,
+    string Sex,
+    bool Premium,
+    bool Summit,
+    DateTime CreatedAt,
+    DateTime UpdatedAt
+);
