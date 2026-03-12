@@ -1,7 +1,7 @@
 using Scalar.AspNetCore;
 
 using Doyep.Analyzer.Infrastructure;
-using Doyep.Analyzer.Api;
+using Doyep.Analyzer.Api.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 

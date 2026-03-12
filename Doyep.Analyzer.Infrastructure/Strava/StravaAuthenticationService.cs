@@ -51,14 +51,14 @@ public class StravaAuthenticationService : IStravaAuthenticationService
         });
 
         var response = await _httpClient.PostAsync("/oauth/token", body);
-
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<StravaTokenResponse>();
+        var dto = await response.Content.ReadFromJsonAsync<StravaTokenResponseDto>();
+        return dto!.ToModel();
     }
 
     /// <inheritdoc/>
-    public async Task<StravaRefreshTokenResponse?> RefreshToken(string refreshToken)
+    public async Task<StravaTokenResponse?> RefreshToken(string refreshToken)
     {
         var body = new FormUrlEncodedContent(new Dictionary<string, string>
         {
@@ -69,10 +69,10 @@ public class StravaAuthenticationService : IStravaAuthenticationService
         });
 
         var response = await _httpClient.PostAsync("/oauth/token", body);
-
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<StravaRefreshTokenResponse>();
+        var dto = await response.Content.ReadFromJsonAsync<StravaTokenResponseDto>();
+        return dto!.ToModel();
     }
 
     /// <inheritdoc/>

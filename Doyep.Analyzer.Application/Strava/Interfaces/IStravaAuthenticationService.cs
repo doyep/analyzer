@@ -23,7 +23,7 @@ public interface IStravaAuthenticationService
     /// </summary>
     /// <param name="refreshToken">A valid refresh token.</param>
     /// <returns>A task representing the new token response or null if renewall fails.</returns>
-    Task<StravaRefreshTokenResponse?> RefreshToken(string refreshToken);
+    Task<StravaTokenResponse?> RefreshToken(string refreshToken);
 
     /// <summary>
     /// Revoke the current access token from the application.
