@@ -5,8 +5,8 @@ namespace Doyep.Analyzer.Application.Strava;
 /// </summary>
 public record StravaTokenResponse(
     string TokenType,
-    int ExpiresIn,
-    long ExpiresAt,
+    TimeSpan ExpiresIn,
+    DateTimeOffset ExpiresAt,
     string RefreshToken,
     string AccessToken,
     SummaryAthlete? Athlete

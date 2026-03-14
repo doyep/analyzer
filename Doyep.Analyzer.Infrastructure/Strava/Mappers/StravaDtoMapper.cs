@@ -10,8 +10,8 @@ public static class StravaDtoMapper
 
     public static StravaTokenResponse ToModel(this StravaTokenResponseDto dto) => new(
         dto.TokenType,
-        dto.ExpiresIn,
-        dto.ExpiresAt,
+        TimeSpan.FromSeconds(dto.ExpiresIn),
+        DateTimeOffset.FromUnixTimeSeconds(dto.ExpiresAt).UtcDateTime,
         dto.RefreshToken,
         dto.AccessToken,
         dto.Athlete?.ToModel()
@@ -30,7 +30,7 @@ public static class StravaDtoMapper
         dto.Sex,
         dto.Premium,
         dto.Summit,
-        dto.CreatedAt,
-        dto.UpdatedAt
+        new DateTimeOffset(dto.CreatedAt),
+        new DateTimeOffset(dto.UpdatedAt)
     );
 }

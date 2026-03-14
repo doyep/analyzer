@@ -18,7 +18,6 @@ public static class StravaServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.Configure<StravaOptions>(configuration.GetSection(StravaOptions.SectionName));
-
         services.AddHttpClient<IStravaAuthenticationService, StravaAuthenticationService>((serviceProvider, client) =>
         {
             var options = serviceProvider.GetRequiredService<IOptions<StravaOptions>>().Value;

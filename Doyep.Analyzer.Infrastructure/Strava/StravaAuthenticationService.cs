@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
@@ -11,22 +12,25 @@ namespace Doyep.Analyzer.Infrastructure.Strava;
 /// </summary>
 public class StravaAuthenticationService : IStravaAuthenticationService
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly HttpClient _httpClient;
     private readonly StravaOptions _options;
 
-    public StravaAuthenticationService(HttpClient httpClient, IOptions<StravaOptions> options)
+    public StravaAuthenticationService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor, IOptions<StravaOptions> options)
     {
         _httpClient = httpClient;
+        _httpContextAccessor = httpContextAccessor;
         _options = options.Value;
     }
 
     /// <inheritdoc/>
-    public string GenerateAuthorizationUrl(Uri redirectUri)
+    public string GenerateLoginUrl()
     {
+        var request = _httpContextAccessor.HttpContext.Request;
         var queries = new Dictionary<string, string?>
         {
             { "client_id", _options.ClientId },
-            { "redirect_uri", redirectUri.ToString() },
+            { "redirect_uri", $"{request.Scheme}://{request.Host}/auth/callback" },
             { "response_type", "code" },
             { "approval_prompt", "force" },
             { "scope", "read,read_all,profile:read_all,activity:read_all" },

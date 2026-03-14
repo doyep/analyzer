@@ -16,6 +16,6 @@ public record SummaryAthlete(
     string Sex,
     bool Premium,
     bool Summit,
-    DateTime CreatedAt,
-    DateTime UpdatedAt
+    DateTimeOffset CreatedAt,
+    DateTimeOffset UpdatedAt
 );

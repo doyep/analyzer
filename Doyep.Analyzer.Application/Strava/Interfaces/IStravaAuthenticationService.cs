@@ -6,11 +6,10 @@ namespace Doyep.Analyzer.Application.Strava;
 public interface IStravaAuthenticationService
 {
     /// <summary>
-    /// Construct the Strava OAuth authorization URL to initiate the login workflow.
+    /// Redirects the user to the Strava OAuth authorization URL to initiate the login workflow.
     /// </summary>
-    /// <param name="redirectUri">The URI to which Strava should redirect after authorization.</param>
     /// <returns>The formatted URL string for the Strava login page.</returns>
-    string GenerateAuthorizationUrl(Uri redirectUri);
+    string GenerateLoginUrl();
 
     /// <summary>
     /// Exchange an authorization code with a full token response and summary authenticated Athlete.
