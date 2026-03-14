@@ -1,3 +1,5 @@
+using Scalar.AspNetCore;
+
 using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Infrastructure;
 
@@ -15,6 +17,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
+    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
 }
 
 app.UseHttpsRedirection();

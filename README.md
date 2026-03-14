@@ -1,6 +1,8 @@
-# analyzer
+# Analyzer
 
 Web Application for analyzing performance for athletes and their friends based on Strava API.
+
+At this moment, this repository only contains WebApi. The Ui will be add someday.
 
 # Requirements
 
