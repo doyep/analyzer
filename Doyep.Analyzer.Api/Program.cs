@@ -1,15 +1,20 @@
 using Scalar.AspNetCore;
 
-using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Infrastructure;
+using Doyep.Analyzer.Api;
+using Doyep.Analyzer.Infrastructure.Strava;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services
+    .AddOptions<StravaApplicationOptions>()
+    .BindConfiguration(StravaApplicationOptions.SectionName)
+    .ValidateOnStart();
+builder.Services
     .AddOpenApi()
-    .AddStrava(builder.Configuration);
+    .AddStrava();
 
 var app = builder.Build();
 
@@ -21,11 +26,9 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
 }
 
-app.UseHttpsRedirection();
+app.MapApiEndpoints();
+app.MapAuthEndpoints();
 
-app.MapGet("/strava/token/{code}", async (string code, IStravaAuthenticationService strava) =>
-{
-    return await strava.ExchangeToken(code);
-});
+app.UseHttpsRedirection();
 
 app.Run();
