@@ -9,7 +9,7 @@ namespace Doyep.Analyzer.Api;
 /// If the authenticated <see cref="Athlete"> is not present in the Whitelist, it return an unauthorized response.
 /// If all checks pass, it return the access token.
 /// </summary>
-public static class ExchangeToken
+public static class Callback
 {
     public static async Task<IResult> Handle(string code, string scope, IStravaAuthenticationService strava)
     {
