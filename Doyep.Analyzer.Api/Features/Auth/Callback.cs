@@ -3,11 +3,14 @@ using Doyep.Analyzer.Application.Strava;
 
 namespace Doyep.Analyzer.Api;
 
-/// <summary>
-/// This class contains the endpoint for handling Strava token exchange callback.
-/// If the scope doesn't include all read permissions, it return an bad request response.
-/// If the authenticated <see cref="Athlete"> is not present in the Whitelist, it return an unauthorized response.
-/// If all checks pass, it return the access token.
+/// /// <summary>
+/// Handles the Strava OAuth token exchange callback.
+/// If the user cancelled the authentication process, it returns a redirection to the login page.
+/// If the provided scope does not include all required read permissions, a bad request response is returned.
+/// If the authenticated <see cref="Athlete"/> is not present in the whitelist, an unauthorized response is returned.
+/// If all checks pass, the access token is returned.
+/// 
+/// TODO : Still work in progress.
 /// </summary>
 public static class Callback
 {

@@ -17,6 +17,7 @@ public static class AuthEndpoints
         authGroup.MapGet("/callback", Callback.Handle)
             .WithDescription("Callback endpoint for handling the Strava token exchanges. Exchanges the authorization code for an access token and a refresh token. While work in progress, it returns an bad request response if the authenticated user is not present in the whitelist, otherwise it return the access token.")
             .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status302Found)
             .Produces(StatusCodes.Status400BadRequest);
 
         return app;
