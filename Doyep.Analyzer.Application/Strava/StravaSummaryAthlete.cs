@@ -1,9 +1,9 @@
-namespace Doyep.Analyzer.Application.Strava;
+namespace Doyep.Analyzer.Application;
 
 /// <summary>
 /// Represents Athlete informations
 /// </summary>
-public record Athlete(
+public record StravaSummaryAthlete(
     long Id,
     int ResourceState,
     string Firstname,
