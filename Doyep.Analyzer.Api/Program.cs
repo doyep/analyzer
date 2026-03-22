@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromDescription();
+    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromApiReference();
 }
 
 app.MapApiEndpoints();
