@@ -1,4 +1,4 @@
-namespace Doyep.Analyzer.Application.Strava;
+namespace Doyep.Analyzer.Application;
 
 /// <summary>
 /// Provides authentication and token management throught the Strava Api

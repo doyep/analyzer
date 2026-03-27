@@ -1,4 +1,4 @@
-using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Application;
 
 namespace Doyep.Analyzer.Api;
 

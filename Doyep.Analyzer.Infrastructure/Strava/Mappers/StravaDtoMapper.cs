@@ -1,4 +1,4 @@
-using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Application;
 
 namespace Doyep.Analyzer.Infrastructure.Strava;
 
@@ -21,9 +21,9 @@ public static class StravaDtoMapper
     );
 
     /// <summary>
-    /// Maps a <see cref="SummaryAthleteDto"/> to a <see cref="Athlete"/>
+    /// Maps a <see cref="SummaryAthleteDto"/> to a <see cref="StravaSummaryAthlete"/>
     /// </summary>
-    public static Athlete ToModel(this SummaryAthleteDto dto) => new(
+    public static StravaSummaryAthlete ToModel(this SummaryAthleteDto dto) => new(
         dto.Id,
         dto.ResourceState,
         dto.Firstname,

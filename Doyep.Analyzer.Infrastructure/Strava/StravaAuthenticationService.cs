@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Options;
 using System.Net.Http.Json;
 
-using Doyep.Analyzer.Application.Auth;
-using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Application;
+
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Infrastructure.Strava;
 

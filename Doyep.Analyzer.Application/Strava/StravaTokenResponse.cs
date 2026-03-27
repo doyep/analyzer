@@ -1,4 +1,4 @@
-namespace Doyep.Analyzer.Application.Strava;
+namespace Doyep.Analyzer.Application;
 
 /// <summary>
 /// Represents the response returned by the Strava token exchange endpoint.
@@ -9,5 +9,5 @@ public record StravaTokenResponse(
     DateTimeOffset ExpiresAt,
     string RefreshToken,
     string AccessToken,
-    Athlete? Athlete
+    StravaSummaryAthlete? Athlete
 );

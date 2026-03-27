@@ -1,7 +1,7 @@
-using Microsoft.Extensions.DependencyInjection;
-
-using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Application;
 using Doyep.Analyzer.Infrastructure.Strava;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Doyep.Analyzer.Infrastructure;
 

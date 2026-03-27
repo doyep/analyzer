@@ -1,11 +1,10 @@
-namespace Doyep.Analyzer.Application.Auth;
+namespace Doyep.Analyzer.Application;
 
 /// <summary>
 /// Utility class to validate if the scopes granted by the user include all the required scopes for the application to works properly.
 /// </summary>
 public static class ScopeValidator
 {
-
     /// <summary>
     /// The list of scopes required by the application to works properly.
     /// These scopes are required to be included in the authorization URL and to be granted by the user during the OAuth flow.

@@ -1,0 +1,20 @@
+version: "3.9"
+
+# Docker Compose file for local database setup using PostgreSQL.
+services:
+  postgres:
+    image: postgres:17
+    container_name: doyep-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: doyep_analyzer
+    ports:
+      - "5432:5432"
+    volumes:
+      - doyep_data:/var/lib/postgresql/data
+
+volumes:
+  doyep_data:
+    name: doyep_postgres_data
