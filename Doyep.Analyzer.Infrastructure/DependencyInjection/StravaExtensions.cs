@@ -1,4 +1,4 @@
-using Doyep.Analyzer.Application;
+using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Infrastructure.Strava;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +9,7 @@ namespace Doyep.Analyzer.Infrastructure;
 /// Provide extension methods for registering Strava integration services.
 /// This includes configuration options and the Strava authentication service.
 /// </summary>
-public static class StravaServiceCollectionExtensions
+public static class StravaExtensions
 {
 
     /// <summary>
@@ -17,6 +17,10 @@ public static class StravaServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddStrava(this IServiceCollection services)
     {
+        services.AddOptions<StravaOptions>()
+            .BindConfiguration(StravaOptions.SectionName)
+            .ValidateOnStart();
+
         services.AddHttpClient<IStravaAuthenticationService, StravaAuthenticationService>((client) =>
         {
             client.BaseAddress = new Uri(StravaEndpoints.BaseUrl);

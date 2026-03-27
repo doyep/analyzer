@@ -31,6 +31,14 @@ public class Athlete
     public DateTimeOffset? LastConnection { get; private set; }
 
     /// <summary>
+    /// Determines if the athlete has access rights to the application based on their role.
+    /// </summary>
+    public bool HasAccess()
+    {
+        return Role != Role.None;
+    }
+
+    /// <summary>
     /// Grants access to the athlete if they have no access rights.
     /// </summary>
     public void GrantAccess()
@@ -49,9 +57,7 @@ public class Athlete
     /// <summary>
     /// Updates the athlete's first and last name, and sets the last connection timestamp.
     /// </summary>
-    /// <param name="firstName"></param>
-    /// <param name="lastName"></param>
-    public void updateAthleteInfo(string firstName, string lastName)
+    public void UpdateProfile(string firstName, string lastName)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -59,7 +65,7 @@ public class Athlete
     }
 
     /// <summary>
-    /// Factory method to create a new Athlete instance with the provided Strava ID, first name, and last name. The new ahtlete will have no access rights and the last connection timestamp will be set to the current time.
+    /// Factory method to create a new Athlete instance with the provided Strava ID, first name, and last name. The new athlete will have no access rights and the last connection timestamp will be set to the current time.
     /// </summary>
     public static Athlete Register(long stravaId, string firstName, string lastName)
     {

@@ -1,5 +1,7 @@
-using Doyep.Analyzer.Application;
+using Doyep.Analyzer.Application.Athletes;
 using Doyep.Analyzer.Domain;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace Doyep.Analyzer.Infrastructure.Persistence;
 
@@ -8,16 +10,38 @@ namespace Doyep.Analyzer.Infrastructure.Persistence;
 /// </summary>
 public class AthleteRepository(AnalyzerDbContext _context) : IAthleteRepository
 {
+
     /// <inheritdoc/>
-    public async Task AddAthleteAsync(Athlete athlete)
+    public Task<Athlete?> FindByStravaIdAsync(long stravaId)
     {
-        await _context.Athletes.AddAsync(athlete);
-        await _context.SaveChangesAsync();
+        return _context.Athletes.FirstOrDefaultAsync(a => a.StravaId == stravaId);
     }
 
     /// <inheritdoc/>
-    public async Task<Athlete?> GetAthleteByStravaIdAsync(long stravaId)
+    public Task AddAsync(Athlete athlete)
     {
-        return await _context.Athletes.FindAsync(stravaId);
+        try
+        {
+            _context.Athletes.Add(athlete);
+            return _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            throw new DuplicateAthleteException(athlete.StravaId);
+        }
+    }
+
+    /// <inheritdoc/>
+    public Task UpdateAsync(Athlete athlete)
+    {
+        try
+        {
+            _context.Athletes.Update(athlete);
+            return _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            throw new AthleteNotFoundException(athlete.StravaId);
+        }
     }
 }

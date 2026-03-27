@@ -1,4 +1,4 @@
-namespace Doyep.Analyzer.Application;
+namespace Doyep.Analyzer.Application.Auth;
 
 /// <summary>
 /// Utility class to validate if the scopes granted by the user include all the required scopes for the application to works properly.

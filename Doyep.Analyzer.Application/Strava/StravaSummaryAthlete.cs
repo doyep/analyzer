@@ -1,4 +1,4 @@
-namespace Doyep.Analyzer.Application;
+namespace Doyep.Analyzer.Application.Strava;
 
 /// <summary>
 /// Represents Athlete informations

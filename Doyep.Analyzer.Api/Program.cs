@@ -1,7 +1,7 @@
 using Doyep.Analyzer.Api;
+using Doyep.Analyzer.Api.Features.Auth;
+using Doyep.Analyzer.Application;
 using Doyep.Analyzer.Infrastructure;
-using Doyep.Analyzer.Infrastructure.Persistence;
-using Doyep.Analyzer.Infrastructure.Strava;
 
 using Scalar.AspNetCore;
 
@@ -9,16 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddOptions<StravaApplicationOptions>()
-    .BindConfiguration(StravaApplicationOptions.SectionName)
-    .ValidateOnStart();
-builder.Services.AddStrava();
+    .AddApi()
+    .AddApplication()
+    .AddInfrastructure()
+    .AddJwtAuthentication(builder.Configuration);
 
+// TODO : Properly configure Policies
 builder.Services
-    .AddOptions<AnalyzerDbContextOptions>()
-    .BindConfiguration(AnalyzerDbContextOptions.SectionName)
-    .ValidateOnStart();
-builder.Services.AddPersistence();
+    .AddAuthorizationBuilder()
+    .AddPolicy("admin", policy => policy.RequireRole("Admin"))
+    .AddPolicy("user", policy => policy.RequireRole("User"));
 
 builder.Services.AddOpenApi();
 
@@ -31,6 +31,9 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
     app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromApiReference();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapApiEndpoints();
 app.MapAuthEndpoints();
