@@ -12,12 +12,12 @@ var postgres = builder
 var api = builder
     .AddProject("api", "../../apps/api/Doyep.Analyzer.Api.csproj")
     .WithReference(postgres)
-    .WaitFor(postgres);
+    .WaitFor(postgres)
+    .WithExternalHttpEndpoints();
 
 var web = builder
     .AddPnpmApp("web", "../../apps/web")
     .WithReference(api)
-    .WaitFor(api)
-    .WithUrl("http://localhost:4200");
+    .WaitFor(api);
 
 builder.Build().Run();

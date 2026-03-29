@@ -12,7 +12,8 @@ builder.Services
     .AddApi()
     .AddApplication()
     .AddInfrastructure()
-    .AddJwtAuthentication(builder.Configuration);
+    .AddJwtAuthentication(builder.Configuration)
+    .AddReverseProxy(builder.Configuration);
 
 // TODO : Properly configure Policies
 builder.Services
@@ -29,7 +30,6 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-    app.MapGet("/", () => Results.Redirect("/scalar")).ExcludeFromApiReference();
 }
 
 app.UseAuthentication();
@@ -37,6 +37,8 @@ app.UseAuthorization();
 
 app.MapApiEndpoints();
 app.MapAuthEndpoints();
+
+app.MapReverseProxy();
 
 app.UseHttpsRedirection();
 
