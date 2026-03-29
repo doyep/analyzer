@@ -1,6 +1,0 @@
-<Solution>
-  <Project Path="Doyep.Analyzer.Api/Doyep.Analyzer.Api.csproj" />
-  <Project Path="Doyep.Analyzer.Application/Doyep.Analyzer.Application.csproj" />
-  <Project Path="Doyep.Analyzer.Domain/Doyep.Analyzer.Domain.csproj" />
-  <Project Path="Doyep.Analyzer.Infrastructure/Doyep.Analyzer.Infrastructure.csproj" />
-</Solution>

@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Doyep.Analyzer.Application\Doyep.Analyzer.Application.csproj" />
-    <ProjectReference Include="..\Doyep.Analyzer.Infrastructure\Doyep.Analyzer.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\application\Doyep.Analyzer.Application.csproj" />
+    <ProjectReference Include="..\..\src\infrastructure\Doyep.Analyzer.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

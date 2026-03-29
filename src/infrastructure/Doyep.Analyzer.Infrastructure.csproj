@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Doyep.Analyzer.Application\Doyep.Analyzer.Application.csproj" />
+    <ProjectReference Include="..\application\Doyep.Analyzer.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
