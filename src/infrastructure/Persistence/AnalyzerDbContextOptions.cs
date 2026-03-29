@@ -13,8 +13,8 @@ public class AnalyzerDbContextOptions
     public const string SectionName = "ConnectionStrings";
 
     /// <summary>
-    /// The default connection string used to connect to the database.
+    /// The connection string used to connect to the DoyepAnalyzer database.
     /// </summary>
-    public required string DefaultConnection { get; set; }
+    public required string DoyepAnalyzerDb { get; set; }
 
 }

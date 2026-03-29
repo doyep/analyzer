@@ -31,11 +31,11 @@ dotnet user-secrets set "Jwt:Secret" "..."
 # Migration 
 
 ```bash
-dotnet ef migrations add InitialCreate -p Doyep.Analyzer.Infrastructure -s Doyep.Analyzer.Api
+dotnet ef migrations add InitialCreate -p src/infrastructure -s apps/api
 ```
 
 ```bash
-dotnet ef database update -p Doyep.Analyzer.Infrastructure -s Doyep.Analyzer.Api
+dotnet ef database update -p src/infrastructure -s apps/api
 ```
 
 # Aspire 

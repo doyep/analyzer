@@ -24,7 +24,13 @@ public static class PersistenceExtensions
         services.AddDbContext<AnalyzerDbContext>((sp, options) =>
         {
             var dbContextOptions = sp.GetRequiredService<IOptions<AnalyzerDbContextOptions>>().Value;
-            options.UseNpgsql(dbContextOptions.DefaultConnection);
+            options.UseNpgsql(dbContextOptions.DoyepAnalyzerDb, npgsql =>
+            {
+                npgsql.EnableRetryOnFailure(
+                    maxRetryCount: 5,
+                    maxRetryDelay: TimeSpan.FromSeconds(5),
+                    errorCodesToAdd: null);
+            });
         });
 
         services.AddScoped<IAthleteRepository, AthleteRepository>();
