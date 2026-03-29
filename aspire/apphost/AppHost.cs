@@ -14,4 +14,10 @@ var api = builder
     .WithReference(postgres)
     .WaitFor(postgres);
 
+var web = builder
+    .AddPnpmApp("web", "../../apps/web")
+    .WithReference(api)
+    .WaitFor(api)
+    .WithUrl("http://localhost:4200");
+
 builder.Build().Run();
