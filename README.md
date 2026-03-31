@@ -15,7 +15,7 @@ This API need the following informations :
 - `Strava.RedirectUri`
 - `Jwt.Secret`
 
-You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Anlyzer.Api layer)
+You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Analyzer.Api layer)
 
 ```bash
 dotnet user-secrets init

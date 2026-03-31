@@ -1,5 +1,4 @@
 using Doyep.Analyzer.Application.Athletes;
-using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;

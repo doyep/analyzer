@@ -24,6 +24,9 @@ public static class JwtAuthenticationServiceCollectionExtensions
             .GetRequiredSection(JwtOptions.SectionName)
             .Get<JwtOptions>();
 
+        if (jwt is null)
+            throw new InvalidOperationException($"Missing configuration for {JwtOptions.SectionName}.");
+
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
@@ -33,8 +36,8 @@ public static class JwtAuthenticationServiceCollectionExtensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwt!.Issuer,
-                    ValidAudience = jwt!.Audience,
+                    ValidIssuer = jwt.Issuer,
+                    ValidAudience = jwt.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Secret)),
                 };
 
