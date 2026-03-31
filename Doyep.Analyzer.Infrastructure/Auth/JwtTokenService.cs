@@ -17,7 +17,7 @@ public class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
 {
     private readonly JwtOptions _options = options.Value;
 
-    /// <inheritdoc>
+    /// <inheritdoc />
     public string Generate(Athlete athlete)
     {
         // here's a guide that use JwtRegisteredClaimNames instead of ClaimTypes :

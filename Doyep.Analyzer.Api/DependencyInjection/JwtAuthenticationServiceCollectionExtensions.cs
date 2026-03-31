@@ -21,7 +21,7 @@ public static class JwtAuthenticationServiceCollectionExtensions
         IConfiguration configuration)
     {
         var jwt = configuration
-            .GetSection(JwtOptions.SectionName)
+            .GetRequiredSection(JwtOptions.SectionName)
             .Get<JwtOptions>();
 
         services.AddAuthentication("Bearer")
@@ -42,7 +42,11 @@ public static class JwtAuthenticationServiceCollectionExtensions
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Query[CookieConstants.AccessToken];
+                        if (context.Request.Cookies.TryGetValue(CookieConstants.AccessToken, out var accessToken))
+                        {
+                            context.Token = accessToken;
+                        }
+
                         return Task.CompletedTask;
                     }
                 };

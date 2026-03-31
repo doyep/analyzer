@@ -18,12 +18,12 @@ public class AthleteRepository(AnalyzerDbContext _context) : IAthleteRepository
     }
 
     /// <inheritdoc/>
-    public Task AddAsync(Athlete athlete)
+    public async Task AddAsync(Athlete athlete)
     {
         try
         {
             _context.Athletes.Add(athlete);
-            return _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
         catch (DbUpdateException)
         {
@@ -32,16 +32,9 @@ public class AthleteRepository(AnalyzerDbContext _context) : IAthleteRepository
     }
 
     /// <inheritdoc/>
-    public Task UpdateAsync(Athlete athlete)
+    public async Task UpdateAsync(Athlete athlete)
     {
-        try
-        {
-            _context.Athletes.Update(athlete);
-            return _context.SaveChangesAsync();
-        }
-        catch (DbUpdateException)
-        {
-            throw new AthleteNotFoundException(athlete.StravaId);
-        }
+        _context.Athletes.Update(athlete);
+        await _context.SaveChangesAsync();
     }
 }

@@ -1,7 +1,7 @@
 namespace Doyep.Analyzer.Domain;
 
 /// <summary>
-/// Provides extension methods for the <see cref="Role"/> enumeration,
+/// Provides extension methods for the <see cref="Role"/> enumeration.
 /// </summary>
 public static class RoleExtensions
 {
@@ -14,7 +14,7 @@ public static class RoleExtensions
         {
             Role.Admin => [Role.Admin, Role.User],
             Role.User => [Role.User],
-            _ => []
+            _ => Array.Empty<Role>()
         };
     }
 }

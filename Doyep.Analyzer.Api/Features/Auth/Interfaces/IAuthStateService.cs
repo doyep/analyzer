@@ -9,7 +9,7 @@ public interface IAuthStateService
 {
     /// <summary>
     /// Generates a unique state value for the OAuth authentication request and stores it in cookies for later validation.
-    /// The state value is typically a random string that helps to prevent CSRF attacks by ensuring
+    /// The state value is typically a random string that helps to prevent CSRF attacks by ensuring that the callback received is in response to an authentication request initiated by the same client.
     /// </summary>
     string GenerateState(HttpContext context);
 

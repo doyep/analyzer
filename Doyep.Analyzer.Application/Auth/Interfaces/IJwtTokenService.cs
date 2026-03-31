@@ -9,7 +9,7 @@ public interface IJwtTokenService
 {
     /// <summary>
     /// Generates a JWT token for the specified athlete.
-    /// It contains as clams :
+    /// It contains the following claims :
     /// <list type="bullet">
     ///   <item>
     ///     <description>The Strava ID</description>

@@ -87,8 +87,6 @@ public class StravaAuthenticationService : IStravaAuthenticationService
 
         var url = QueryHelpers.AddQueryString("oauth/deauthorize", queries);
 
-        url = "https://www.strava.com/oauth/deauthorize?access_token=" + accessToken;
-
         var response = await _httpClient.PostAsync(url, null);
 
         response.EnsureSuccessStatusCode();

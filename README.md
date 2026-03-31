@@ -8,12 +8,12 @@ At this moment, this repository only contains WebApi. The Ui will be added somed
 
 This API need the following informations :
 - `AllowedHosts`
-- `ConectionStrings.DefaultConnection`
+- `ConnectionStrings.DefaultConnection`
 - `Application.BaseUrl`
 - `Strava.ClientId` 
 - `Strava.ClientSecret`
 - `Strava.RedirectUri`
-- `Jwt.SecretKey`
+- `Jwt.Secret`
 
 You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Anlyzer.Api layer)
 
@@ -25,7 +25,7 @@ dotnet user-secrets set "Application:BaseUrl" "..."
 dotnet user-secrets set "Strava:ClientId" "..."
 dotnet user-secrets set "Strava:ClientSecret" "..."
 dotnet user-secrets set "Strava:RedirectUri" "..."
-dotnet user-secrets set "Jwt:SecretKey" "..."
+dotnet user-secrets set "Jwt:Secret" "..."
 ```
 
 # Migration 

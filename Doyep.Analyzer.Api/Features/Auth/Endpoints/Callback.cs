@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Api.Features.Auth;
 
-/// /// <summary>
+/// <summary>
 /// Handles the Strava OAuth token exchange callback.
 /// If the user cancelled the authentication process, it returns a redirection to the login page.
 /// If the provided scope does not include all required read permissions, a bad request response is returned.
@@ -65,7 +65,7 @@ public static class Callback
 
             return Results.Redirect($"{appBaseUrl}/dashboard");
         })
-            .WithDescription("Callback endpoint for handling the Strava token exchanges. Exchanges the authorization code for an access token and a refresh token. While work in progress, it returns an bad request response if the authenticated user is not present in the whitelist, otherwise it return the access token.")
+            .WithDescription("Callback endpoint for handling the Strava OAuth flow. Validates the request (error, state, scope, and authorization code), exchanges the authorization code for Strava tokens, ensures the authenticated athlete is allowed access, and on success issues an HTTP-only authentication cookie and redirects the user to the /dashboard page (302). If validation or authorization fails, the user is redirected to an appropriate error page.")
             .Produces(StatusCodes.Status302Found);
 
         return app;
@@ -115,6 +115,7 @@ public static class Callback
             AuthError.AccessDenied => Results.Redirect($"{baseUrl}/login"),
             AuthError.InvalidRequest => Results.Redirect($"{baseUrl}/error?code=INVALID_REQUEST"),
             AuthError.InvalidScope => Results.Redirect($"{baseUrl}/error?code=INVALID_SCOPE"),
+            AuthError.InvalidState => Results.Redirect($"{baseUrl}/error?code=INVALID_STATE"),
             AuthError.StravaError => Results.Redirect($"{baseUrl}/error?code=STRAVA_ERROR"),
             AuthError.Unauthorized => Results.Redirect($"{baseUrl}/error?code=UNAUTHORIZED"),
             _ => Results.Redirect($"{baseUrl}/error")
