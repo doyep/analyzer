@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 
-using Doyep.Analyzer.Application;
+using Doyep.Analyzer.Application.Auth;
+using Doyep.Analyzer.Application.Strava;
 
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
@@ -13,16 +14,16 @@ namespace Doyep.Analyzer.Infrastructure.Strava;
 public class StravaAuthenticationService : IStravaAuthenticationService
 {
     private readonly HttpClient _httpClient;
-    private readonly StravaApplicationOptions _options;
+    private readonly StravaOptions _options;
 
-    public StravaAuthenticationService(HttpClient httpClient, IOptions<StravaApplicationOptions> options)
+    public StravaAuthenticationService(HttpClient httpClient, IOptions<StravaOptions> options)
     {
         _httpClient = httpClient;
         _options = options.Value;
     }
 
     /// <inheritdoc/>
-    public string GenerateLoginUrl()
+    public string GenerateLoginUrl(string state)
     {
         var queries = new Dictionary<string, string?>
         {
@@ -31,6 +32,7 @@ public class StravaAuthenticationService : IStravaAuthenticationService
             { "response_type", StravaResponseTypes.Code },
             { "approval_prompt", StravaApprovalPrompts.Force },
             { "scope", string.Join(",", ScopeValidator.RequiredScopes) },
+            { "state", state }
         };
 
         var baseUrl = new Uri(StravaEndpoints.BaseUrl);
@@ -65,7 +67,7 @@ public class StravaAuthenticationService : IStravaAuthenticationService
             { "client_id", _options.ClientId },
             { "client_secret", _options.ClientSecret },
             { "grant_type", StravaGrantTypes.RefreshToken },
-            { "refresh_token ", refreshToken }
+            { "refresh_token", refreshToken }
         });
 
         var response = await _httpClient.PostAsync(StravaEndpoints.TokenEndpoint, body);

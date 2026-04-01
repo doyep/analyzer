@@ -1,7 +1,7 @@
-namespace Doyep.Analyzer.Application;
+namespace Doyep.Analyzer.Application.Strava;
 
 /// <summary>
-/// Provides authentication and token management throught the Strava Api
+/// Defines the contract for handling authentication and token management with the Strava API.
 /// </summary>
 public interface IStravaAuthenticationService
 {
@@ -9,7 +9,7 @@ public interface IStravaAuthenticationService
     /// Redirects the user to the Strava OAuth authorization URL to initiate the login workflow.
     /// </summary>
     /// <returns>The formatted URL string for the Strava login page.</returns>
-    string GenerateLoginUrl();
+    string GenerateLoginUrl(string state);
 
     /// <summary>
     /// Exchange an authorization code with a full token response and summary authenticated Athlete.

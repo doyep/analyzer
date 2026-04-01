@@ -5,12 +5,12 @@ namespace Doyep.Analyzer.Infrastructure.Strava;
 /// These values are loaded from the "Strava" section of appsettings.json, from
 /// environment variables or user secrets.
 /// </summary>
-public class StravaApplicationOptions
+public class StravaOptions
 {
     /// <summary>
     /// Section name of appsettings.json
     /// </summary>
-    public const string SectionName = "StravaApplication";
+    public const string SectionName = "Strava";
 
     /// <summary>
     /// OAuth 2.0 client identifier provided by Strava for the application

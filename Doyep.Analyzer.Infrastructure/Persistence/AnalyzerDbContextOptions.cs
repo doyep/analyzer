@@ -13,8 +13,8 @@ public class AnalyzerDbContextOptions
     public const string SectionName = "ConnectionStrings";
 
     /// <summary>
-    /// The name of the connection string for the Analyzer database.
+    /// The default connection string used to connect to the database.
     /// </summary>
-    public required string AnalyzerDb { get; set; }
+    public required string DefaultConnection { get; set; }
 
 }
