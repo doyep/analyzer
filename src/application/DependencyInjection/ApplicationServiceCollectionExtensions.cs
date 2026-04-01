@@ -14,10 +14,6 @@ public static class ApplicationServiceCollectionExtensions
     /// </summary>
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddOptions<ApplicationOptions>()
-            .BindConfiguration(ApplicationOptions.SectionName)
-            .ValidateOnStart();
-
         services.AddScoped<IAthleteService, AthleteService>();
 
         return services;

@@ -1,16 +1,16 @@
-namespace Doyep.Analyzer.Application;
+namespace Doyep.Analyzer.Infrastructure;
 
 /// <summary>
-/// Configuration options for the Analyzer application.
-/// These values are loaded from the "Application" section of appsettings.json, from
+/// Configuration options for the Analyzer frontend.
+/// These values are loaded from the "Frontend" section of appsettings.json, from
 /// environment variables or user secrets.
 /// </summary>
-public class ApplicationOptions
+public class FrontendOptions
 {
     /// <summary>
     /// Section name of appsettings.json.
     /// </summary>
-    public const string SectionName = "Application";
+    public const string SectionName = "Frontend";
 
     /// <summary>
     /// Base URL of the application, used for building redirect URIs and links.

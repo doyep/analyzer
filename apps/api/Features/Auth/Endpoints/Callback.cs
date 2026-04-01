@@ -1,7 +1,7 @@
-using Doyep.Analyzer.Application;
 using Doyep.Analyzer.Application.Athletes;
 using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Infrastructure;
 using Doyep.Analyzer.Infrastructure.Auth;
 
 using Microsoft.AspNetCore.Mvc;
@@ -32,10 +32,10 @@ public static class Callback
             [FromServices] IAuthStateService authStateService,
             [FromServices] IJwtTokenService tokenService,
             [FromServices] IStravaAuthenticationService stravaService,
-            [FromServices] IOptions<ApplicationOptions> applicationOptions,
+            [FromServices] IOptions<FrontendOptions> frontendOptions,
             [FromServices] IOptions<JwtOptions> jwtOptions) =>
         {
-            var appBaseUrl = applicationOptions.Value.BaseUrl;
+            var appBaseUrl = frontendOptions.Value.BaseUrl;
 
             if (IsAccessDenied(error))
                 return RedirectToErrorPage(appBaseUrl, AuthError.AccessDenied);

@@ -12,7 +12,7 @@ builder.Services
     .AddApi()
     .AddApplication()
     .AddInfrastructure()
-    .AddJwtAuthentication(builder.Configuration)
+    .AddJwtAuthentication()
     .AddReverseProxy(builder.Configuration);
 
 // TODO : Properly configure Policies

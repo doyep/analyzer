@@ -15,7 +15,7 @@ namespace Doyep.Analyzer.Infrastructure.Auth;
 /// </summary>
 public class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
 {
-    private readonly JwtOptions _options = options.Value;
+    private readonly JwtOptions _jwt = options.Value;
 
     /// <inheritdoc />
     public string Generate(Athlete athlete)
@@ -30,14 +30,14 @@ public class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
                 .Select(role => new Claim(ClaimTypes.Role, role.ToString()))
         ];
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Secret));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwt.Secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _options.Issuer,
-            audience: _options.Audience,
+            issuer: _jwt.Issuer,
+            audience: _jwt.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_options.ExpirationInMinutes),
+            expires: DateTime.UtcNow.AddMinutes(_jwt.ExpirationInMinutes),
             signingCredentials: creds
         );
 

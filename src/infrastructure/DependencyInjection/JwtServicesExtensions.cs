@@ -2,6 +2,7 @@ using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Infrastructure.Auth;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Infrastructure;
 
@@ -18,6 +19,8 @@ public static class JwtServicesExtensions
         services.AddOptions<JwtOptions>()
             .BindConfiguration(JwtOptions.SectionName)
             .ValidateOnStart();
+
+        services.AddSingleton<IValidateOptions<JwtOptions>, JwtOptionsValidator>();
 
         services.AddScoped<IJwtTokenService, JwtTokenService>();
 

@@ -2,6 +2,7 @@ using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Infrastructure.Strava;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Infrastructure;
 
@@ -20,6 +21,8 @@ public static class StravaExtensions
         services.AddOptions<StravaOptions>()
             .BindConfiguration(StravaOptions.SectionName)
             .ValidateOnStart();
+
+        services.AddSingleton<IValidateOptions<StravaOptions>, StravaOptionsValidator>();
 
         services.AddHttpClient<IStravaAuthenticationService, StravaAuthenticationService>((client) =>
         {
