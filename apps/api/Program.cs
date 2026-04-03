@@ -35,8 +35,8 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapApiEndpoints();
 app.MapAuthEndpoints();
+app.MapApiEndpoints();
 
 app.MapReverseProxy();
 

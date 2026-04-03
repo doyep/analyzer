@@ -21,6 +21,8 @@ public static class PersistenceExtensions
             .BindConfiguration(AnalyzerDbContextOptions.SectionName)
             .ValidateOnStart();
 
+        services.AddSingleton<IValidateOptions<AnalyzerDbContextOptions>, AnalyzerDbContextOptionsValidator>();
+
         services.AddDbContext<AnalyzerDbContext>((sp, options) =>
         {
             var dbContextOptions = sp.GetRequiredService<IOptions<AnalyzerDbContextOptions>>().Value;

@@ -12,6 +12,18 @@ public class AnalyzerDbContextOptionsValidator : IValidateOptions<AnalyzerDbCont
     /// </summary>
     public ValidateOptionsResult Validate(string? name, AnalyzerDbContextOptions options)
     {
-        throw new NotImplementedException();
+        var errors = new List<string>();
+
+        if (IsPlaceholder(options.DoyepAnalyzerDb))
+            errors.Add("DoyepAnalyzerDb connection string is not configured properly.");
+
+        return errors.Count == 0
+            ? ValidateOptionsResult.Success
+            : ValidateOptionsResult.Fail(errors);
+    }
+
+    private static bool IsPlaceholder(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? true : value.Contains("<YOUR_");
     }
 }
