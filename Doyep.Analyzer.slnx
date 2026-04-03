@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="apps/api/Doyep.Analyzer.Api.csproj" />
+  <Project Path="src/application/Doyep.Analyzer.Application.csproj" />
+  <Project Path="src/domain/Doyep.Analyzer.Domain.csproj" />
+  <Project Path="src/infrastructure/Doyep.Analyzer.Infrastructure.csproj" />
+
+  <Project Path="aspire/apphost/Doyep.Analyzer.Aspire.AppHost.csproj"/>
+  <Project Path="aspire/servicedefaults/Doyep.Analyzer.Aspire.ServiceDefaults.csproj"/>
+</Solution>

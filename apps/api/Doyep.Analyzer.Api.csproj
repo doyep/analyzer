@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>b0c1b94d-34a6-459e-9765-9ae81e53ee13</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\application\Doyep.Analyzer.Application.csproj" />
+    <ProjectReference Include="..\..\src\infrastructure\Doyep.Analyzer.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- For OpenAPI/Scalar documentation -->
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+
+    <!-- For EF migrations -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
+
+    <!-- For JWT authentication -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+
+    <!-- For ReverseProxy -->
+    <PackageReference Include="Yarp.ReverseProxy" />
+  </ItemGroup>
+
+</Project>
