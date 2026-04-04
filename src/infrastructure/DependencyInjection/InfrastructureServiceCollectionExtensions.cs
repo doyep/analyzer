@@ -16,6 +16,7 @@ public static class InfrastructureServiceCollectionExtensions
             .AddFrontend()
             .AddJwtServices()
             .AddPersistence()
+            .AddSecurity()
             .AddStrava();
 
         return services;
