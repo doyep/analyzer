@@ -1,3 +1,4 @@
+using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Domain;
 
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
@@ -12,6 +13,7 @@ public class AnalyzerDbContext(DbContextOptions<AnalyzerDbContext> options) : Db
 {
     public DbSet<DataProtectionKey> DataProtectionKeys => Set<DataProtectionKey>();
     public DbSet<Athlete> Athletes => Set<Athlete>();
+    public DbSet<EncryptedStravaToken> StravaTokens => Set<EncryptedStravaToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -32,6 +32,7 @@ public static class Callback
             [FromServices] IAuthStateService authStateService,
             [FromServices] IJwtTokenService tokenService,
             [FromServices] IStravaAuthenticationService stravaService,
+            [FromServices] IStravaTokenRepository stravaTokenRepository,
             [FromServices] IOptions<FrontendOptions> frontendOptions,
             [FromServices] IOptions<JwtOptions> jwtOptions) =>
         {
@@ -49,7 +50,7 @@ public static class Callback
             if (!ScopeValidator.HasRequiredScope(scope))
                 return RedirectToErrorPage(appBaseUrl, AuthError.InvalidScope);
 
-            var result = await HandleCallback(code, athleteService, stravaService, tokenService);
+            var result = await HandleCallback(code, athleteService, stravaService, tokenService, stravaTokenRepository);
 
             if (!result.IsSuccess)
                 return RedirectToErrorPage(appBaseUrl, result.Error);
@@ -78,7 +79,7 @@ public static class Callback
     /// all checks pass. If any step fails, an appropriate error result is returned to indicate the
     /// type of failure encountered during the authentication process.
     /// </summary>
-    private static async Task<CallbackResult> HandleCallback(string code, IAthleteService athleteService, IStravaAuthenticationService strava, IJwtTokenService tokenService)
+    private static async Task<CallbackResult> HandleCallback(string code, IAthleteService athleteService, IStravaAuthenticationService strava, IJwtTokenService tokenService, IStravaTokenRepository stravaTokenRepository)
     {
         var stravaTokenResponse = await strava.ExchangeToken(code);
         if (stravaTokenResponse?.Athlete is null)
@@ -90,6 +91,8 @@ public static class Callback
             await strava.Deauthorize(stravaTokenResponse.AccessToken);
             return new CallbackResult { IsSuccess = false, Error = AuthError.Unauthorized };
         }
+        var stravaToken = StravaToken.CreateFrom(stravaTokenResponse);
+        await stravaTokenRepository.SaveAsync(stravaToken);
 
         var jwtToken = tokenService.Generate(dbAthlete);
         return new CallbackResult { IsSuccess = true, Token = jwtToken };
