@@ -15,8 +15,8 @@ public class AthleteConfiguration : IEntityTypeConfiguration<Athlete>
     /// </summary>
     public void Configure(EntityTypeBuilder<Athlete> builder)
     {
-        builder.HasKey(a => a.StravaId);
-        builder.Property(a => a.StravaId)
+        builder.HasKey(a => a.StravaAthleteId);
+        builder.Property(a => a.StravaAthleteId)
             .ValueGeneratedNever();
         builder.Property(a => a.Role)
             .HasConversion<string>()

@@ -12,9 +12,9 @@ public class AthleteRepository(AnalyzerDbContext _context) : IAthleteRepository
 {
 
     /// <inheritdoc/>
-    public Task<Athlete?> FindByStravaIdAsync(long stravaId)
+    public Task<Athlete?> FindByStravaAthleteIdAsync(long stravaAthleteId)
     {
-        return _context.Athletes.FirstOrDefaultAsync(a => a.StravaId == stravaId);
+        return _context.Athletes.FirstOrDefaultAsync(a => a.StravaAthleteId == stravaAthleteId);
     }
 
     /// <inheritdoc/>
@@ -27,7 +27,7 @@ public class AthleteRepository(AnalyzerDbContext _context) : IAthleteRepository
         }
         catch (DbUpdateException)
         {
-            throw new DuplicateAthleteException(athlete.StravaId);
+            throw new DuplicateAthleteException(athlete.StravaAthleteId);
         }
     }
 

@@ -8,15 +8,15 @@ public class Athlete
     /// <summary>
     /// The unique identifier for the athlete, corresponding to their Strava account ID.
     /// </summary>
-    public long StravaId { get; init; }
+    public long StravaAthleteId { get; init; }
 
     /// <summary>
-    /// The first name of the athlete. It can be null if the athlete has been pre-authorized with only their Strava ID.
+    /// The first name of the athlete. It can be null if the athlete has been pre-authorized with only their Strava athlete ID.
     /// </summary>
     public string? FirstName { get; private set; }
 
     /// <summary>
-    /// The last name of the athlete. It can be null if the athlete has been pre-authorized with only their Strava ID.
+    /// The last name of the athlete. It can be null if the athlete has been pre-authorized with only their Strava athlete ID.
     /// </summary>
     public string? LastName { get; private set; }
 
@@ -65,13 +65,13 @@ public class Athlete
     }
 
     /// <summary>
-    /// Factory method to create a new Athlete instance with the provided Strava ID, first name, and last name. The new athlete will have no access rights and the last connection timestamp will be set to the current time.
+    /// Factory method to create a new Athlete instance with the provided Strava athlete ID, first name, and last name. The new athlete will have no access rights and the last connection timestamp will be set to the current time.
     /// </summary>
-    public static Athlete Register(long stravaId, string firstName, string lastName)
+    public static Athlete Register(long stravaAthleteId, string firstName, string lastName)
     {
         return new Athlete
         {
-            StravaId = stravaId,
+            StravaAthleteId = stravaAthleteId,
             FirstName = firstName,
             LastName = lastName,
             Role = Role.None,
@@ -80,13 +80,13 @@ public class Athlete
     }
 
     /// <summary>
-    /// Factory method to create a new Athlete instance with the provided Strava ID. This method is intended for pre-authorizing users based on their Strava ID before they have connected to the application.
+    /// Factory method to create a new Athlete instance with the provided Strava athlete ID. This method is intended for pre-authorizing users based on their Strava athlete ID before they have connected to the application.
     /// </summary>
-    public static Athlete PreAuthorize(long stravaId)
+    public static Athlete PreAuthorize(long stravaAthleteId)
     {
         return new Athlete
         {
-            StravaId = stravaId,
+            StravaAthleteId = stravaAthleteId,
             Role = Role.User,
         };
     }

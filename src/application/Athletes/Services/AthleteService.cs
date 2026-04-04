@@ -11,7 +11,7 @@ public class AthleteService(IAthleteRepository _athleteRepository) : IAthleteSer
     /// <inheritdoc/>
     public async Task<Athlete> EnsureAthleteExistsAsync(StravaSummaryAthlete stravaAthlete)
     {
-        var athlete = await _athleteRepository.FindByStravaIdAsync(stravaAthlete.Id);
+        var athlete = await _athleteRepository.FindByStravaAthleteIdAsync(stravaAthlete.Id);
 
         if (athlete is not null)
         {
@@ -27,7 +27,7 @@ public class AthleteService(IAthleteRepository _athleteRepository) : IAthleteSer
         }
         catch (DuplicateAthleteException)
         {
-            athlete = await _athleteRepository.FindByStravaIdAsync(stravaAthlete.Id)
+            athlete = await _athleteRepository.FindByStravaAthleteIdAsync(stravaAthlete.Id)
                 ?? throw new InvalidOperationException("Failed to retrieve or create athlete.");
         }
 
