@@ -14,6 +14,7 @@ This API need the following informations :
 - `Strava.ClientSecret`
 - `Strava.RedirectUri`
 - `Jwt.Secret`
+- `Refresh.ExpirationInDays`
 
 You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Analyzer.Api layer)
 
@@ -26,6 +27,7 @@ dotnet user-secrets set "Strava:ClientId" "..."
 dotnet user-secrets set "Strava:ClientSecret" "..."
 dotnet user-secrets set "Strava:RedirectUri" "..."
 dotnet user-secrets set "Jwt:Secret" "..."
+dotnet user-secrets set "Refresh:ExpirationInDays" "..."
 ```
 
 # Migration 
@@ -55,3 +57,4 @@ The reinstall
 dotnet restore
 dotnet build
 ```
+$$

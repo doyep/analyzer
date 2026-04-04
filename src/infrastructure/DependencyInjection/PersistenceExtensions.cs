@@ -1,4 +1,5 @@
 using Doyep.Analyzer.Application.Athletes;
+using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Infrastructure.Persistence;
 
@@ -37,6 +38,7 @@ public static class PersistenceExtensions
         });
 
         services.AddScoped<IAthleteRepository, AthleteRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IStravaTokenRepository, StravaTokenRepository>();
 
         return services;

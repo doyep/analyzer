@@ -15,11 +15,30 @@ public class AthleteConfiguration : IEntityTypeConfiguration<Athlete>
     /// </summary>
     public void Configure(EntityTypeBuilder<Athlete> builder)
     {
+        // Key
         builder.HasKey(a => a.StravaAthleteId);
+
+        // Properties
         builder.Property(a => a.StravaAthleteId)
+            .IsRequired()
             .ValueGeneratedNever();
+
+        builder.Property(a => a.FirstName)
+            .IsRequired(false)
+            .HasMaxLength(100);
+
+        builder.Property(a => a.LastName)
+            .IsRequired(false)
+            .HasMaxLength(100);
+
         builder.Property(a => a.Role)
+            .IsRequired()
             .HasConversion<string>()
-            .HasMaxLength(10);
+            .HasMaxLength(10); // Ensure the length is never exceeded for the enum values
+
+        builder.Property(a => a.LastConnection)
+            .IsRequired(false);
+
+        // Indexes
     }
 }

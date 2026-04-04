@@ -19,3 +19,13 @@ public class AthleteNotFoundException : Exception
     {
     }
 }
+
+/// <summary>
+/// Represents athlete access denied exception, thrown when an athlete does not have access to the application.
+/// </summary>
+public class AthleteAccessDeniedException : Exception
+{
+    public AthleteAccessDeniedException(long stravaAthleteId) : base($"Athlete with Strava ID {stravaAthleteId} does not have access to the application.")
+    {
+    }
+}

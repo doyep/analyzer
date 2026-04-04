@@ -11,14 +11,24 @@ public static class StravaDtoMapper
     /// <summary>
     /// Maps a <see cref="StravaTokenResponseDto"/> to a <see cref="StravaTokenResponse"/>
     /// </summary>
-    public static StravaTokenResponse ToModel(this StravaTokenResponseDto dto) => new(
-        dto.TokenType,
-        TimeSpan.FromSeconds(dto.ExpiresIn),
-        DateTimeOffset.FromUnixTimeSeconds(dto.ExpiresAt).UtcDateTime,
-        dto.RefreshToken,
-        dto.AccessToken,
-        dto.Athlete?.ToModel()
-    );
+    public static StravaAuthTokenResponse ToModel(this StravaAuthTokenResponseDto dto) => new StravaAuthTokenResponse
+    {
+        TokenType = dto.TokenType,
+        ExpiresIn = TimeSpan.FromSeconds(dto.ExpiresIn),
+        ExpiresAt = DateTimeOffset.FromUnixTimeSeconds(dto.ExpiresAt).UtcDateTime,
+        RefreshToken = dto.RefreshToken,
+        AccessToken = dto.AccessToken,
+        Athlete = dto.Athlete.ToModel()
+    };
+
+    public static StravaRefreshTokenResponse ToModel(this StravaRefreshTokenResponseDto dto) => new StravaRefreshTokenResponse
+    {
+        TokenType = dto.TokenType,
+        ExpiresIn = TimeSpan.FromSeconds(dto.ExpiresIn),
+        ExpiresAt = DateTimeOffset.FromUnixTimeSeconds(dto.ExpiresAt).UtcDateTime,
+        RefreshToken = dto.RefreshToken,
+        AccessToken = dto.AccessToken
+    };
 
     /// <summary>
     /// Maps a <see cref="SummaryAthleteDto"/> to a <see cref="StravaSummaryAthlete"/>

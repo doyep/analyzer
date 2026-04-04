@@ -9,9 +9,12 @@ namespace Doyep.Analyzer.Application.Athletes;
 public interface IAthleteService
 {
     /// <summary>
-    /// Ensures that an athlete corresponding to the given Strava summary athlete exists in the application.
-    /// If the athlete already exists, their profile information is updated.
-    /// If not, a new athlete is created.
+    /// Ensures that an athlete exists in the database based on the provided Strava summary athlete information.
+    /// If the athlete does not exist, it will be created.
+    /// If the athlete already exists, their profile information will be updated.
+    /// The method also checks if the athlete has access to the application.
     /// </summary>
-    public Task<Athlete> EnsureAthleteExistsAsync(StravaSummaryAthlete stravaAthlete);
+    /// <exception cref="AthleteAccessDeniedException">Thrown when the athlete does not have access to the application.</exception>
+    /// <exception cref="AthleteNotFoundException">Thrown when the athlete cannot be found or created.</exception>
+    public Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete);
 }

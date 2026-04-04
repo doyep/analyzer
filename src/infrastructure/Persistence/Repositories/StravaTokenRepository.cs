@@ -1,4 +1,3 @@
-using Doyep.Analyzer.Application.Security;
 using Doyep.Analyzer.Application.Strava;
 
 using Microsoft.EntityFrameworkCore;
@@ -8,19 +7,12 @@ namespace Doyep.Analyzer.Infrastructure.Persistence;
 /// <summary>
 /// Implements the IStravaTokenRepository interface using Entity Framework Core to manage StravaToken entities in the database.
 /// </summary>
-public class StravaTokenRepository(
-    AnalyzerDbContext _context,
-    IEncryptionService _encryption)
-    : IStravaTokenRepository
+public class StravaTokenRepository(AnalyzerDbContext _context) : IStravaTokenRepository
 {
     /// <inheritdoc/>
     public async Task<StravaToken?> FindByStravaAthleteId(long stravaAthleteId)
     {
-        var encryptedStravaToken = await _context.StravaTokens.FirstOrDefaultAsync(t => t.StravaAthleteId == stravaAthleteId);
-
-        return encryptedStravaToken == null
-            ? null
-            : Decrypt(encryptedStravaToken);
+        return await _context.StravaTokens.FirstOrDefaultAsync(t => t.StravaAthleteId == stravaAthleteId);
     }
 
     /// <inheritdoc/>
@@ -28,16 +20,17 @@ public class StravaTokenRepository(
     {
         var existingToken = await FindByStravaAthleteId(stravaToken.StravaAthleteId);
 
-        if (existingToken == null)
+        if (existingToken is null)
         {
-            _context.StravaTokens.Add(Encrypt(stravaToken));
+            _context.StravaTokens.Add(stravaToken);
         }
         else
         {
-            existingToken.UpdateFrom(stravaToken);
-            _context.StravaTokens.Update(Encrypt(stravaToken));
+            existingToken.AccessToken = stravaToken.AccessToken;
+            existingToken.RefreshToken = stravaToken.RefreshToken;
+            existingToken.ExpiresAt = stravaToken.ExpiresAt;
+            _context.StravaTokens.Update(existingToken);
         }
-
         try
         {
             await _context.SaveChangesAsync();
@@ -46,35 +39,5 @@ public class StravaTokenRepository(
         {
             throw new StravaTokenPersistenceException(stravaToken.StravaAthleteId);
         }
-    }
-
-    /// <summary>
-    /// Converts an EncryptedStravaToken entity from the database into a StravaToken domain model, decrypting the access and refresh tokens in the process.
-    /// </summary>
-    private StravaToken Decrypt(EncryptedStravaToken encryptedToken)
-    {
-        return new StravaToken
-        {
-            StravaAthleteId = encryptedToken.StravaAthleteId,
-            AccessToken = _encryption.Decrypt(encryptedToken.EncryptedAccessToken),
-            RefreshToken = _encryption.Decrypt(encryptedToken.EncryptedRefreshToken),
-            ExpiresAt = encryptedToken.ExpiresAt
-        };
-    }
-
-    /// <summary>
-    /// Converts a StravaToken domain model into an EncryptedStravaToken entity for storage in the database, encrypting the access and refresh tokens in the process.
-    /// </summary>
-    /// <param name="token"></param>
-    /// <returns></returns>
-    private EncryptedStravaToken Encrypt(StravaToken token)
-    {
-        return new EncryptedStravaToken
-        {
-            StravaAthleteId = token.StravaAthleteId,
-            EncryptedAccessToken = _encryption.Encrypt(token.AccessToken),
-            EncryptedRefreshToken = _encryption.Encrypt(token.RefreshToken),
-            ExpiresAt = token.ExpiresAt
-        };
     }
 }

@@ -40,12 +40,11 @@ public class StravaToken
         ExpiresAt = stravaToken.ExpiresAt;
     }
 
-    public static StravaToken CreateFrom(StravaTokenResponse tokenResponse)
+    public static StravaToken CreateFrom(StravaAuthTokenResponse tokenResponse)
     {
         return new StravaToken
         {
-            /// TODO : Improve type safety
-            StravaAthleteId = tokenResponse.Athlete?.Id ?? throw new ArgumentException("Token response must include athlete information."),
+            StravaAthleteId = tokenResponse.Athlete.Id,
             AccessToken = tokenResponse.AccessToken,
             RefreshToken = tokenResponse.RefreshToken,
             ExpiresAt = tokenResponse.ExpiresAt

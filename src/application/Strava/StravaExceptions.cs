@@ -12,3 +12,16 @@ public class StravaTokenPersistenceException : Exception
     {
     }
 }
+
+/// <summary>
+/// Exception thrown when there is an error during the Strava authentication process, such as invalid credentials or network issues.
+/// </summary>
+public class StravaAuthenticationException : Exception
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="StravaAuthenticationException"/> class with a specified error message.
+    /// </summary>
+    public StravaAuthenticationException(string message) : base(message)
+    {
+    }
+}
