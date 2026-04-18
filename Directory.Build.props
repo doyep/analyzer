@@ -3,6 +3,7 @@
   <!-- 🌍 Global settings -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <DoyepAnalyzerUserSecretsId>b0c1b94d-34a6-459e-9765-9ae81e53ee13</DoyepAnalyzerUserSecretsId>
 
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>

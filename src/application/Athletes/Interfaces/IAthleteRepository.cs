@@ -10,7 +10,7 @@ public interface IAthleteRepository
     /// <summary>
     /// Retrieves an Athlete by their unique Strava identifier.
     /// </summary>
-    Task<Athlete?> FindByStravaIdAsync(long stravaId);
+    Task<Athlete?> FindByStravaAthleteIdAsync(long stravaAthleteId);
 
     /// <summary>
     /// Add a new athlete to the repository.

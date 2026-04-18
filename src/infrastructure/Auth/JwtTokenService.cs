@@ -24,7 +24,7 @@ public class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
         // https://medium.com/@solomongetachew112/jwt-authentication-in-net-8-a-complete-guide-for-secure-and-scalable-applications-6281e5e8667c
         List<Claim> claims =
         [
-            new Claim(ClaimTypes.NameIdentifier, athlete.StravaId.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, athlete.StravaAthleteId.ToString()),
             ..athlete.Role
                 .GetInheritedRoles()
                 .Select(role => new Claim(ClaimTypes.Role, role.ToString()))

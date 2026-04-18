@@ -5,7 +5,7 @@ namespace Doyep.Analyzer.Application.Athletes;
 /// </summary>
 public class DuplicateAthleteException : Exception
 {
-    public DuplicateAthleteException(long stravaId) : base($"An athlete with Strava ID {stravaId} already exists.")
+    public DuplicateAthleteException(long stravaAthleteId) : base($"An athlete with Strava ID {stravaAthleteId} already exists.")
     {
     }
 }
@@ -15,7 +15,7 @@ public class DuplicateAthleteException : Exception
 /// </summary>
 public class AthleteNotFoundException : Exception
 {
-    public AthleteNotFoundException(long stravaId) : base($"No athlete found with Strava ID {stravaId}.")
+    public AthleteNotFoundException(long stravaAthleteId) : base($"No athlete found with Strava ID {stravaAthleteId}.")
     {
     }
 }

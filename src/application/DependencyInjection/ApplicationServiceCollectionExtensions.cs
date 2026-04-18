@@ -1,4 +1,5 @@
 using Doyep.Analyzer.Application.Athletes;
+using Doyep.Analyzer.Application.Auth;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +16,7 @@ public static class ApplicationServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<IAthleteService, AthleteService>();
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }

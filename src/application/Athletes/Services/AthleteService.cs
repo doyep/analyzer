@@ -9,9 +9,34 @@ namespace Doyep.Analyzer.Application.Athletes;
 public class AthleteService(IAthleteRepository _athleteRepository) : IAthleteService
 {
     /// <inheritdoc/>
-    public async Task<Athlete> EnsureAthleteExistsAsync(StravaSummaryAthlete stravaAthlete)
+    public async Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete)
     {
-        var athlete = await _athleteRepository.FindByStravaIdAsync(stravaAthlete.Id);
+        try
+        {
+            var athlete = await FindOrCreateAthleteAsync(stravaAthlete);
+
+            return athlete.HasAccess()
+                ? Result<Athlete, Error>.Success(athlete)
+                : Result<Athlete, Error>.Failure(AthleteErrors.UnauthorizedAthlete);
+        }
+        catch (AthleteNotFoundException)
+        {
+            return Result<Athlete, Error>.Failure(AthleteErrors.NotFoundAthlete);
+        }
+    }
+
+    /// <summary>
+    /// Finds an existing athlete by their Strava athlete ID or creates a new one if it does not exist.
+    /// If the athlete already exists, their profile information is updated with the latest data from Strava.
+    /// If the athlete does not exist, a new athlete record is created in the database.
+    /// The method returns the athlete entity regardless of whether it was found or created.
+    /// </summary>
+    /// <param name="stravaAthlete">The Strava athlete information.</param>
+    /// <returns>The athlete entity.</returns>
+    /// <exception cref="AthleteNotFoundException">Thrown when the athlete cannot be found or created.</exception>
+    private async Task<Athlete> FindOrCreateAthleteAsync(StravaSummaryAthlete stravaAthlete)
+    {
+        var athlete = await _athleteRepository.FindByStravaAthleteIdAsync(stravaAthlete.Id);
 
         if (athlete is not null)
         {
@@ -27,10 +52,9 @@ public class AthleteService(IAthleteRepository _athleteRepository) : IAthleteSer
         }
         catch (DuplicateAthleteException)
         {
-            athlete = await _athleteRepository.FindByStravaIdAsync(stravaAthlete.Id)
-                ?? throw new InvalidOperationException("Failed to retrieve or create athlete.");
+            athlete = await _athleteRepository.FindByStravaAthleteIdAsync(stravaAthlete.Id)
+                ?? throw new AthleteNotFoundException(stravaAthlete.Id);
         }
-
         return athlete;
     }
 }

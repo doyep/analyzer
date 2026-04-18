@@ -11,16 +11,13 @@ namespace Doyep.Analyzer.Infrastructure.Strava;
 /// <summary>
 /// Handles Strava OAuth 2.0 authentication workflows using <see cref="HttpClient"/>.
 /// </summary>
-public class StravaAuthenticationService : IStravaAuthenticationService
+public class StravaAuthenticationService(
+    HttpClient httpClient,
+    IOptions<StravaOptions> options
+) : IStravaAuthenticationService
 {
-    private readonly HttpClient _httpClient;
-    private readonly StravaOptions _options;
-
-    public StravaAuthenticationService(HttpClient httpClient, IOptions<StravaOptions> options)
-    {
-        _httpClient = httpClient;
-        _options = options.Value;
-    }
+    private readonly HttpClient _httpClient = httpClient;
+    private readonly StravaOptions _options = options.Value;
 
     /// <inheritdoc/>
     public string GenerateLoginUrl(string state)
@@ -42,9 +39,9 @@ public class StravaAuthenticationService : IStravaAuthenticationService
     }
 
     /// <inheritdoc/>
-    public async Task<StravaTokenResponse?> ExchangeToken(string authorizationCode)
+    public async Task<StravaAuthTokenResponse> ExchangeTokenAsync(string authorizationCode)
     {
-        var body = new FormUrlEncodedContent(new Dictionary<string, string>
+        var dto = await SendTokenRequestAsync<StravaAuthTokenResponseDto>(new()
         {
             { "client_id", _options.ClientId },
             { "client_secret", _options.ClientSecret },
@@ -52,17 +49,13 @@ public class StravaAuthenticationService : IStravaAuthenticationService
             { "code", authorizationCode }
         });
 
-        var response = await _httpClient.PostAsync(StravaEndpoints.TokenEndpoint, body);
-        response.EnsureSuccessStatusCode();
-
-        var dto = await response.Content.ReadFromJsonAsync<StravaTokenResponseDto>();
-        return dto!.ToModel();
+        return dto.ToModel();
     }
 
     /// <inheritdoc/>
-    public async Task<StravaTokenResponse?> RefreshToken(string refreshToken)
+    public async Task<StravaRefreshTokenResponse> RefreshTokenAsync(string refreshToken)
     {
-        var body = new FormUrlEncodedContent(new Dictionary<string, string>
+        var dto = await SendTokenRequestAsync<StravaRefreshTokenResponseDto>(new()
         {
             { "client_id", _options.ClientId },
             { "client_secret", _options.ClientSecret },
@@ -70,11 +63,7 @@ public class StravaAuthenticationService : IStravaAuthenticationService
             { "refresh_token", refreshToken }
         });
 
-        var response = await _httpClient.PostAsync(StravaEndpoints.TokenEndpoint, body);
-        response.EnsureSuccessStatusCode();
-
-        var dto = await response.Content.ReadFromJsonAsync<StravaTokenResponseDto>();
-        return dto!.ToModel();
+        return dto.ToModel();
     }
 
     /// <inheritdoc/>
@@ -90,5 +79,18 @@ public class StravaAuthenticationService : IStravaAuthenticationService
         var response = await _httpClient.PostAsync(url, null);
 
         response.EnsureSuccessStatusCode();
+    }
+
+    /// <summary>
+    /// Sends a POST request to the Strava token endpoint with the specified body parameters and returns the deserialized response.
+    /// </summary>
+    private async Task<T> SendTokenRequestAsync<T>(Dictionary<string, string> bodyParams)
+    {
+        var body = new FormUrlEncodedContent(bodyParams);
+
+        var response = await _httpClient.PostAsync(StravaEndpoints.TokenEndpoint, body);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<T>() ?? throw new StravaAuthenticationException("Failed to parse Strava token response.");
     }
 }

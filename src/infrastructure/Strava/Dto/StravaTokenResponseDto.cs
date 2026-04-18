@@ -5,7 +5,7 @@ namespace Doyep.Analyzer.Infrastructure.Strava;
 /// <summary>
 /// Represents the response returned by the Strava token exchange endpoint.
 /// </summary>
-public record StravaTokenResponseDto
+public abstract record StravaTokenResponseDto
 {
     /// <summary>
     /// Always <c>Bearer</c>
@@ -36,10 +36,23 @@ public record StravaTokenResponseDto
     /// </summary>
     [property: JsonPropertyName("access_token")]
     public required string AccessToken { get; init; }
+}
 
+/// <summary>
+/// Represents the response returned by the Strava token exchange endpoint.
+/// </summary>
+public record StravaAuthTokenResponseDto : StravaTokenResponseDto
+{
     /// <summary>
     /// The auth <see cref="SummaryAthleteDto"/>.
     /// </summary>
     [property: JsonPropertyName("athlete")]
-    public required SummaryAthleteDto? Athlete { get; init; }
+    public required SummaryAthleteDto Athlete { get; init; }
+}
+
+/// <summary>
+/// Represents the response returned by the Strava refresh token endpoint.
+/// </summary>
+public record StravaRefreshTokenResponseDto : StravaTokenResponseDto
+{
 }
