@@ -1,5 +1,4 @@
 using Doyep.Analyzer.Application.Auth;
-using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +7,11 @@ using Microsoft.Extensions.Options;
 namespace Doyep.Analyzer.Api.Features.Auth;
 
 /// <summary>
-/// Handles the Strava OAuth token exchange callback.
-/// If the user cancelled the authentication process, it returns a redirection to the login page.
-/// If the provided scope does not include all required read permissions, a bad request response is returned.
-/// If the authenticated <see cref="StravaSummaryAthlete"/> is not present in the whitelist, an unauthorized response is returned.
-/// If all checks pass, the access token is returned.
-///
-/// TODO : Still work in progress.
+/// Defines the callback endpoint for handling the Strava OAuth flow.
+/// Validates the request (error, state, scope, and authorization code),
+/// exchanges the authorization code for Strava tokens, ensures the authenticated athlete is allowed access,
+/// and on success issues HTTP-only access and refresh token authentication cookies and redirects the user to the configured frontend base URL (302).
+/// If validation or authorization fails, the user is redirected to an appropriate error page.
 /// </summary>
 public static class Callback
 {
