@@ -39,7 +39,7 @@ public class StravaAuthenticationService(
     }
 
     /// <inheritdoc/>
-    public async Task<StravaAuthTokenResponse> ExchangeToken(string authorizationCode)
+    public async Task<StravaAuthTokenResponse> ExchangeTokenAsync(string authorizationCode)
     {
         var dto = await SendTokenRequestAsync<StravaAuthTokenResponseDto>(new()
         {
@@ -53,7 +53,7 @@ public class StravaAuthenticationService(
     }
 
     /// <inheritdoc/>
-    public async Task<StravaRefreshTokenResponse> RefreshToken(string refreshToken)
+    public async Task<StravaRefreshTokenResponse> RefreshTokenAsync(string refreshToken)
     {
         var dto = await SendTokenRequestAsync<StravaRefreshTokenResponseDto>(new()
         {
@@ -91,7 +91,6 @@ public class StravaAuthenticationService(
         var response = await _httpClient.PostAsync(StravaEndpoints.TokenEndpoint, body);
         response.EnsureSuccessStatusCode();
 
-        return await response.Content.ReadFromJsonAsync<T>()
-            ?? throw new StravaAuthenticationException("Failed to parse Strava token response.");
+        return await response.Content.ReadFromJsonAsync<T>() ?? throw new StravaAuthenticationException("Failed to parse Strava token response.");
     }
 }

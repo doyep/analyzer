@@ -16,7 +16,7 @@ public class StravaToken
     public string AccessToken { get; set; } = default!;
 
     /// <summary>
-    /// The refresh token string used for obtaining new ccess tokens without requiring the user to re-authenticate.
+    /// The refresh token string used for obtaining new access tokens without requiring the user to re-authenticate.
     /// </summary>
     public string RefreshToken { get; set; } = default!;
 

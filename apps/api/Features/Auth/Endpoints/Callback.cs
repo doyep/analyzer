@@ -33,7 +33,7 @@ public static class Callback
         {
             var appBaseUrl = frontendOptions.Value.BaseUrl;
 
-            var validationError = validator.ValidateCallbackRequest(error, code, scope, state, context);
+            var validationError = validator.ValidateCallbackRequest(error, scope, state, context);
             if (validationError is not null)
             {
                 cookieService.ClearAuthCookies(context);
@@ -53,7 +53,7 @@ public static class Callback
 
             return Results.Redirect(appBaseUrl);
         })
-            .WithDescription("Callback endpoint for handling the Strava OAuth flow. Validates the request (error, state, scope, and authorization code), exchanges the authorization code for Strava tokens, ensures the authenticated athlete is allowed access, and on success issues an HTTP-only authentication cookie and redirects the user to the /dashboard page (302). If validation or authorization fails, the user is redirected to an appropriate error page.")
+            .WithDescription("Callback endpoint for handling the Strava OAuth flow. Validates the request (error, state, scope, and authorization code), exchanges the authorization code for Strava tokens, ensures the authenticated athlete is allowed access, and on success issues HTTP-only access and refresh token authentication cookies and redirects the user to the configured frontend base URL (302). If validation or authorization fails, the user is redirected to an appropriate error page.")
             .Produces(StatusCodes.Status302Found);
 
         return app;

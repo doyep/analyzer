@@ -8,7 +8,7 @@ At this moment, this repository only contains WebApi. The Ui will be added somed
 
 This API need the following informations :
 - `AllowedHosts`
-- `Application.BaseUrl`
+- `Frontend.BaseUrl`
 - `ConnectionStrings.DoyepAnalyzerDb`
 - `Jwt.Secret`
 - `RefreshToken.ExpirationInDays`
@@ -21,7 +21,7 @@ You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Analyzer.Api layer)
 ```bash
 dotnet user-secrets init
 dotnet user-secrets set "AllowedHosts" "..."
-dotnet user-secrets set "Application:BaseUrl" "..."
+dotnet user-secrets set "Frontend:BaseUrl" "..."
 dotnet user-secrets set "ConnectionStrings:DoyepAnalyzerDb" "..."
 dotnet user-secrets set "Jwt:Secret" "..."
 dotnet user-secrets set "RefreshToken:ExpirationInDays" "..."
@@ -57,4 +57,3 @@ The reinstall
 dotnet restore
 dotnet build
 ```
-$$

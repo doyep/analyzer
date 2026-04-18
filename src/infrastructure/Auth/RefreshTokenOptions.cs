@@ -10,7 +10,7 @@ public class RefreshTokenOptions
     /// <summary>
     /// Section name of appsettings.json
     /// </summary>
-    public static string SectionName = "RefreshToken";
+    public const string SectionName = "RefreshToken";
 
     /// <summary>
     /// The expiration time of the refresh token in days.

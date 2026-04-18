@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Domain;
 
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Infrastructure.Auth;
@@ -28,10 +29,10 @@ public class RefreshTokenService(
         try
         {
             var hashedToken = Hash(refreshToken);
-            var entity = RefreshToken.Create(stravaAthleteId, hashedToken, DateTime.UtcNow.AddDays(_options.ExpirationInDays));
+            var entity = RefreshToken.Create(stravaAthleteId, hashedToken, DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays));
             await _repository.AddAsync(entity);
         }
-        catch (Exception)
+        catch (DbUpdateException)
         {
             throw new RefreshTokenPersistenceException();
         }

@@ -14,7 +14,7 @@ public interface IAthleteService
     /// If the athlete already exists, their profile information will be updated.
     /// The method also checks if the athlete has access to the application.
     /// </summary>
-    /// <exception cref="AthleteAccessDeniedException">Thrown when the athlete does not have access to the application.</exception>
-    /// <exception cref="AthleteNotFoundException">Thrown when the athlete cannot be found or created.</exception>
+    /// <param name="stravaAthlete">The Strava summary athlete information.</param>
+    /// <returns>A result containing the athlete if successful, or an error if the athlete is not authorized or if there was an issue with finding or creating the athlete.</returns>
     public Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete);
 }

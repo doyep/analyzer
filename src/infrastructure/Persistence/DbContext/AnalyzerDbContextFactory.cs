@@ -13,7 +13,7 @@ public class AnalyzerDbContextFactory
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
-            .AddUserSecrets("b0c1b94d-34a6-459e-9765-9ae81e53ee13")
+            .AddUserSecrets<AnalyzerDbContextFactory>()
             .AddEnvironmentVariables()
             .Build();
 

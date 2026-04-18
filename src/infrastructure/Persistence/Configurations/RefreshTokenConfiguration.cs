@@ -27,7 +27,7 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         builder.Property(rt => rt.HashedToken)
             .IsRequired()
-            .HasMaxLength(44); // TODO : Verify length for hashed token
+            .HasMaxLength(44);
 
         builder.Property(rt => rt.CreatedAt)
             .IsRequired();

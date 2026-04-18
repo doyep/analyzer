@@ -10,7 +10,7 @@ namespace Doyep.Analyzer.Infrastructure.Persistence;
 public class StravaTokenRepository(AnalyzerDbContext _context) : IStravaTokenRepository
 {
     /// <inheritdoc/>
-    public async Task<StravaToken?> FindByStravaAthleteId(long stravaAthleteId)
+    public async Task<StravaToken?> FindByStravaAthleteIdAsync(long stravaAthleteId)
     {
         return await _context.StravaTokens.FirstOrDefaultAsync(t => t.StravaAthleteId == stravaAthleteId);
     }
@@ -18,7 +18,7 @@ public class StravaTokenRepository(AnalyzerDbContext _context) : IStravaTokenRep
     /// <inheritdoc/>
     public async Task SaveAsync(StravaToken stravaToken)
     {
-        var existingToken = await FindByStravaAthleteId(stravaToken.StravaAthleteId);
+        var existingToken = await FindByStravaAthleteIdAsync(stravaToken.StravaAthleteId);
 
         if (existingToken is null)
         {

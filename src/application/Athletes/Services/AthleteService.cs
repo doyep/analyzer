@@ -1,4 +1,3 @@
-using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Domain;
 
@@ -12,11 +11,18 @@ public class AthleteService(IAthleteRepository _athleteRepository) : IAthleteSer
     /// <inheritdoc/>
     public async Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete)
     {
-        var athlete = await FindOrCreateAthleteAsync(stravaAthlete);
+        try
+        {
+            var athlete = await FindOrCreateAthleteAsync(stravaAthlete);
 
-        return athlete.HasAccess()
-            ? Result<Athlete, Error>.Success(athlete)
-            : Result<Athlete, Error>.Failure(AuthErrors.UnauthorizedAthlete);
+            return athlete.HasAccess()
+                ? Result<Athlete, Error>.Success(athlete)
+                : Result<Athlete, Error>.Failure(AthleteErrors.UnauthorizedAthlete);
+        }
+        catch (AthleteNotFoundException)
+        {
+            return Result<Athlete, Error>.Failure(AthleteErrors.NotFoundAthlete);
+        }
     }
 
     /// <summary>

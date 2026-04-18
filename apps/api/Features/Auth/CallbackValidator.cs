@@ -11,7 +11,7 @@ public class CallbackValidator(
 ) : ICallbackValidator
 {
     /// <inheritdoc/>
-    public Error? ValidateCallbackRequest(string? error, string? code, string? scope, string? state, HttpContext context)
+    public Error? ValidateCallbackRequest(string? error, string? scope, string? state, HttpContext context)
     {
         if (string.Equals(error, "access_denied", StringComparison.OrdinalIgnoreCase))
             return AuthErrors.AccessDenied;

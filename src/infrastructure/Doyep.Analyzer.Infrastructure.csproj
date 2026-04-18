@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <PropertyGroup>
+    <UserSecretsId>$(DoyepAnalyzerUserSecretsId)</UserSecretsId>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\application\Doyep.Analyzer.Application.csproj" />
   </ItemGroup>

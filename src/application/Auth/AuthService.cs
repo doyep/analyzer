@@ -1,5 +1,6 @@
 using Doyep.Analyzer.Application.Athletes;
 using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Domain;
 
 namespace Doyep.Analyzer.Application.Auth;
 
@@ -17,38 +18,77 @@ public class AuthService(
     /// <inheritdoc/>
     public async Task<Result<AuthTokens, Error>> LoginAsync(string authorizationCode)
     {
-        var stravaTokenResponse = await _stravaAuthenticationService.ExchangeToken(authorizationCode);
+        var stravaTokenResponseResult = await ExchangeTokenAsync(authorizationCode);
+        if (stravaTokenResponseResult.IsFailure)
+            return Result<AuthTokens, Error>.Failure(stravaTokenResponseResult.Error);
 
-        var result = await _athleteService.GetAuthorizedAthleteAsync(stravaTokenResponse.Athlete);
-        if (result.IsFailure)
-        {
-            await _stravaAuthenticationService.Deauthorize(stravaTokenResponse.AccessToken);
-            return Result<AuthTokens, Error>.Failure(result.Error);
-        }
+        var athleteResult = await GetAuthorizedAthleteAsync(stravaTokenResponseResult.Value);
+        if (athleteResult.IsFailure)
+            return Result<AuthTokens, Error>.Failure(athleteResult.Error);
 
-        var stravaToken = StravaToken.CreateFrom(stravaTokenResponse);
+        var saveResult = await SaveStravaTokenAsync(stravaTokenResponseResult.Value);
+        if (saveResult.IsFailure)
+            return Result<AuthTokens, Error>.Failure(saveResult.Error);
+
+        return await GenerateTokensAsync(athleteResult.Value);
+    }
+
+    private async Task<Result<StravaAuthTokenResponse, Error>> ExchangeTokenAsync(string authorizationCode)
+    {
         try
         {
+            var stravaTokenResponse = await _stravaAuthenticationService.ExchangeTokenAsync(authorizationCode);
+            return Result<StravaAuthTokenResponse, Error>.Success(stravaTokenResponse);
+        }
+        catch (Exception)
+        {
+            return Result<StravaAuthTokenResponse, Error>.Failure(AuthErrors.StravaError);
+        }
+    }
+
+    private async Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaAuthTokenResponse stravaTokenResponse)
+    {
+        var athleteResult = await _athleteService.GetAuthorizedAthleteAsync(stravaTokenResponse.Athlete);
+        if (athleteResult.IsFailure)
+        {
+            await _stravaAuthenticationService.Deauthorize(stravaTokenResponse.AccessToken);
+            return Result<Athlete, Error>.Failure(athleteResult.Error);
+        }
+
+        return Result<Athlete, Error>.Success(athleteResult.Value);
+    }
+
+    private async Task<Result<Task, Error>> SaveStravaTokenAsync(StravaAuthTokenResponse stravaTokenResponse)
+    {
+        try
+        {
+            var stravaToken = StravaToken.CreateFrom(stravaTokenResponse);
             await _stravaTokenRepository.SaveAsync(stravaToken);
+
+            return Result<Task, Error>.Success(Task.CompletedTask);
         }
         catch (StravaTokenPersistenceException)
         {
-            return Result<AuthTokens, Error>.Failure(AuthErrors.FailedToSaveStravaToken);
+            return Result<Task, Error>.Failure(AuthErrors.FailedToSaveStravaToken);
         }
-
-        var jwtToken = _jwtTokenService.Generate(result.Value);
-        var refreshToken = await _refreshTokenService.IssueRefreshTokenAsync(result.Value.StravaAthleteId);
-
-        return Result<AuthTokens, Error>.Success(new AuthTokens
-        {
-            JwtToken = jwtToken,
-            RefreshToken = refreshToken
-        });
     }
 
-    /// <inheritdoc/>
-    public Task LogoutAsync(long stravaAthleteId)
+    private async Task<Result<AuthTokens, Error>> GenerateTokensAsync(Athlete athlete)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var jwtToken = _jwtTokenService.Generate(athlete);
+            var refreshToken = await _refreshTokenService.IssueRefreshTokenAsync(athlete.StravaAthleteId);
+
+            return Result<AuthTokens, Error>.Success(new AuthTokens
+            {
+                JwtToken = jwtToken,
+                RefreshToken = refreshToken
+            });
+        }
+        catch (RefreshTokenPersistenceException)
+        {
+            return Result<AuthTokens, Error>.Failure(AuthErrors.FailedToGenerateTokens);
+        }
     }
 }
