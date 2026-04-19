@@ -91,4 +91,10 @@ public class AuthService(
             return Result<AuthTokens, Error>.Failure(AuthErrors.FailedToGenerateTokens);
         }
     }
+
+    /// <inheritdoc/>
+    public async Task LogoutAsync(string refreshToken)
+    {
+        await _refreshTokenService.TryRevokeAsync(refreshToken);
+    }
 }

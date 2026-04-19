@@ -18,6 +18,19 @@ public class RefreshTokenRepository(AnalyzerDbContext _context) : IRefreshTokenR
     }
 
     /// <inheritdoc/>
+    public async Task TryRevokeAsync(string hashedRefreshToken)
+    {
+        var token = await _context.RefreshTokens
+            .FirstOrDefaultAsync(rt => rt.HashedToken == hashedRefreshToken && rt.RevokedAt == null && DateTimeOffset.UtcNow < rt.ExpiresAt);
+
+        if (token is not null)
+        {
+            token.Revoke();
+            await _context.SaveChangesAsync();
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task RevokeAllActiveByStravaAthleteIdAsync(long stravaAthleteId)
     {
         var tokens = await _context.RefreshTokens

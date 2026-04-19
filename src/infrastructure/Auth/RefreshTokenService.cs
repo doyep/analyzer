@@ -40,6 +40,13 @@ public class RefreshTokenService(
         return refreshToken;
     }
 
+    /// <inheritdoc/>
+    public async Task TryRevokeAsync(string refreshToken)
+    {
+        var hashedToken = Hash(refreshToken);
+        await _repository.TryRevokeAsync(hashedToken);
+    }
+
     /// <summary>
     /// Generates a secure random refresh token string. The token is generated using a cryptographically secure random number generator and is encoded in Base64 to ensure it can be safely transmitted and stored.
     /// The length of the token can be adjusted by changing the number of bytes generated, but 64 bytes (resulting in an 88-character Base64 string) is a common choice for sufficient entropy.
