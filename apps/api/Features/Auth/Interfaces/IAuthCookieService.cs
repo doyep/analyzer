@@ -14,6 +14,13 @@ public interface IAuthCookieService
     void SetAuthCookies(HttpContext context, string jwt, string refreshToken);
 
     /// <summary>
+    /// Attempts to retrieve the refresh token from the HTTP request cookies. This method checks for the presence of the refresh token cookie and returns its value if found, or null if the cookie is not present. It is used to facilitate the logout process by identifying which refresh token to invalidate.
+    /// </summary>
+    /// <param name="context">The HTTP context.</param>
+    /// <returns>The refresh token if present; otherwise, null.</returns>
+    string? TryGetRefreshToken(HttpContext context);
+
+    /// <summary>
     /// Clears the authentication cookies from the user's browser, effectively logging the user out by removing the access token and refresh token cookies.
     /// This method should set the cookies with an expired date to ensure they are removed from the browser.
     /// </summary>

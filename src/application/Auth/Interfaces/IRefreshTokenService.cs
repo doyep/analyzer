@@ -15,4 +15,12 @@ public interface IRefreshTokenService
     /// <returns>The newly issued refresh token.</returns>
     /// <exception cref="RefreshTokenPersistenceException">Thrown when there is an error while persisting the refresh token to the database.</exception>
     public Task<string> IssueRefreshTokenAsync(long stravaAthleteId);
+
+    /// <summary>
+    /// Attempts to revoke the specified refresh token. This method checks if the provided refresh token exists and is active, and if so, it revokes the token to prevent further use. If the token does not exist or is already revoked,
+    /// the method completes without throwing an exception, allowing for idempotent logout operations.
+    /// </summary>
+    /// <param name="refreshToken">The refresh token to revoke.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public Task TryRevokeAsync(string refreshToken);
 }

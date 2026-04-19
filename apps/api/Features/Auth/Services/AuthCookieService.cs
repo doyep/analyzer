@@ -30,6 +30,14 @@ public class AuthCookieService(
         context.Response.Cookies.Append(CookieConstants.RefreshToken, string.Empty, GetCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
     }
 
+    /// <inheritdoc/>
+    public string? TryGetRefreshToken(HttpContext context)
+    {
+        context.Request.Cookies.TryGetValue(CookieConstants.RefreshToken, out var refreshToken);
+
+        return refreshToken;
+    }
+
     /// <summary>
     /// Generates a <see cref="CookieOptions"/> object with security attributes set for authentication cookies, including HttpOnly, Secure, SameSite, and an expiration date based on the provided parameter.
     /// This method centralizes the configuration of cookie options to ensure consistency across all authentication-related cookies.
