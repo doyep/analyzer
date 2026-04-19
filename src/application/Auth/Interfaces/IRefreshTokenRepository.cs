@@ -24,10 +24,9 @@ public interface IRefreshTokenRepository
     Task RevokeAllActiveByStravaAthleteIdAsync(long stravaAthleteId);
 
     /// <summary>
-    /// Attempts to revoke the specified refresh token. This method checks if the provided refresh token exists and is active, and if so, it revokes the token to prevent further use. If the token does not exist or is already revoked,
-    /// the method completes without throwing an exception, allowing for idempotent logout operations.
+    /// Attempts to revoke a refresh token based on its hashed value. This method checks if the token exists, is not already revoked, and has not expired before revoking it.
     /// </summary>
-    /// <param name="refreshToken">The refresh token to revoke.</param>
+    /// <param name="hashedRefreshToken">The hashed refresh token to revoke.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    Task TryRevokeAsync(string refreshToken);
+    Task TryRevokeAsync(string hashedRefreshToken);
 }

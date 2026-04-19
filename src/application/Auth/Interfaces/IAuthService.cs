@@ -11,9 +11,9 @@ public interface IAuthService
     Task<Result<AuthTokens, Error>> LoginAsync(string authorizationCode);
 
     /// <summary>
-    /// Logs out a user by invalidating the provided refresh token. This method removes the refresh token from the database, effectively preventing the user from obtaining new access tokens using that refresh token in the future.
+    /// Logs out a user by invalidating the provided refresh token. This method revokes (blacklists) the refresh token from the database, effectively preventing the user from obtaining new access tokens using that refresh token in the future.
     /// </summary>
-    /// <param name="refreshToken">The refresh token to invalidate.</param>
+    /// <param name="refreshToken">The refresh token to revoke.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task LogoutAsync(string refreshToken);
 }

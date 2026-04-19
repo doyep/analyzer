@@ -20,8 +20,15 @@ public static class Logout
                 return Results.NoContent();
             }
 
-            await authService.LogoutAsync(refreshToken);
-            authCookieService.ClearAuthCookies(context);
+            try
+            {
+                await authService.LogoutAsync(refreshToken);
+            }
+            finally
+            {
+                // Clear cookies regardless of logout success to ensure the client is logged out
+                authCookieService.ClearAuthCookies(context);
+            }
 
             return Results.NoContent();
         });
