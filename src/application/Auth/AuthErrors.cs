@@ -27,6 +27,12 @@ public static class AuthErrors
         new("auth.invalid_scope", "Invalid scope parameter.", 400);
 
     /// <summary>
+    /// Indicates that the authorization code parameter is missing.
+    /// </summary>
+    public static readonly Error MissingAuthorizationCode =
+        new("auth.missing_authorization_code", "Missing authorization code parameter.", 400);
+
+    /// <summary>
     /// Indicates that an error occurred during the token exchange process with Strava.
     /// </summary>
     public static readonly Error StravaError =

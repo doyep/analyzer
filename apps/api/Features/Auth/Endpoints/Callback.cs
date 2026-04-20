@@ -30,7 +30,7 @@ public static class Callback
         {
             var appBaseUrl = frontendOptions.Value.BaseUrl;
 
-            var validationError = validator.ValidateCallbackRequest(error, scope, state, context);
+            var validationError = validator.ValidateCallbackRequest(error, code, scope, state, context);
             if (validationError is not null)
             {
                 cookieService.ClearAuthCookies(context);

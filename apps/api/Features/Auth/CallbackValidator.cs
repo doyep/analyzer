@@ -11,10 +11,16 @@ public class CallbackValidator(
 ) : ICallbackValidator
 {
     /// <inheritdoc/>
-    public Error? ValidateCallbackRequest(string? error, string? scope, string? state, HttpContext context)
+    public Error? ValidateCallbackRequest(string? error, string? code, string? scope, string? state, HttpContext context)
     {
         if (string.Equals(error, "access_denied", StringComparison.OrdinalIgnoreCase))
             return AuthErrors.AccessDenied;
+
+        if (!string.IsNullOrEmpty(error))
+            return new Error("auth.oauth_error", $"OAuth error: {error}", 400);
+
+        if (string.IsNullOrEmpty(code))
+            return AuthErrors.MissingAuthorizationCode;
 
         if (!_authStateService.IsStateValid(state, context))
             return AuthErrors.InvalidState;
