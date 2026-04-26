@@ -30,14 +30,14 @@ public static class Callback
         {
             var appBaseUrl = frontendOptions.Value.BaseUrl;
 
-            var validationError = validator.ValidateCallbackRequest(error, code, scope, state, context);
+            var validationError = validator.ValidateCallbackRequest(error, code, scope, state);
             if (validationError is not null)
             {
                 cookieService.ClearAuthCookies(context);
                 return Results.Redirect($"{appBaseUrl}/error?code={validationError.Code}");
             }
 
-            var result = await authService.LoginAsync(code ?? string.Empty);
+            var result = await authService.LoginAsync(code!, state!);
             if (result.IsFailure)
             {
                 cookieService.ClearAuthCookies(context);

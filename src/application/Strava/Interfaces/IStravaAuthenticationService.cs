@@ -8,8 +8,9 @@ public interface IStravaAuthenticationService
     /// <summary>
     /// Redirects the user to the Strava OAuth authorization URL to initiate the login workflow.
     /// </summary>
+    /// <param name="deviceId">The unique identifier for the user's device.</param>
     /// <returns>The formatted URL string for the Strava login page.</returns>
-    string GenerateLoginUrl(string state);
+    string GenerateLoginUrl(Guid deviceId);
 
     /// <summary>
     /// Exchange an authorization code with a full token response and summary authenticated Athlete.

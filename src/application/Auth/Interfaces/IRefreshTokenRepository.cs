@@ -8,6 +8,16 @@ namespace Doyep.Analyzer.Application.Auth;
 public interface IRefreshTokenRepository
 {
     /// <summary>
+    /// Finds an active refresh token for the specified Strava athlete ID and device ID. An active refresh token is one that has not been revoked and has not expired.
+    /// This method is typically used to check if there is an existing valid refresh token for a given athlete and device before issuing a new one.
+    ///
+    /// </summary>
+    /// <param name="stravaAthleteId">The Strava athlete ID for which to find an active refresh token.</param>
+    /// <param name="deviceId">The device ID for which to find an active refresh token.</param>
+    /// <returns>The active refresh token if found; otherwise, null.</returns>
+    Task<RefreshToken?> FindActiveByStravaAthleteIdAndDeviceIdAsync(long stravaAthleteId, Guid deviceId);
+
+    /// <summary>
     /// Adds a new refresh token to the repository.
     /// </summary>
     /// <param name="refreshToken">The refresh token to add.</param>

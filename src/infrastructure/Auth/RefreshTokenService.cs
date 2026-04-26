@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 
 using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Domain;
+using Doyep.Analyzer.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -12,32 +13,46 @@ namespace Doyep.Analyzer.Infrastructure.Auth;
 /// Implements the IRefreshTokenService interface to manage refresh tokens for authenticated athletes.
 /// </summary>
 public class RefreshTokenService(
-    IRefreshTokenRepository repository,
+    AnalyzerDbContext _context,
+    IRefreshTokenRepository _repository,
     IOptions<RefreshTokenOptions> options
 ) : IRefreshTokenService
 {
-    private readonly IRefreshTokenRepository _repository = repository;
     private readonly RefreshTokenOptions _options = options.Value;
 
     /// <inheritdoc/>
-    public async Task<string> IssueRefreshTokenAsync(long stravaAthleteId)
+    public async Task<string> IssueRefreshTokenAsync(long stravaAthleteId, Guid deviceId)
     {
-        await _repository.RevokeAllActiveByStravaAthleteIdAsync(stravaAthleteId);
+        var strategy = _context.Database.CreateExecutionStrategy();
 
-        var refreshToken = Generate();
-
-        try
+        return await strategy.ExecuteAsync(async () =>
         {
-            var hashedToken = Hash(refreshToken);
-            var entity = RefreshToken.Create(stravaAthleteId, hashedToken, DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays));
-            await _repository.AddAsync(entity);
-        }
-        catch (DbUpdateException)
-        {
-            throw new RefreshTokenPersistenceException();
-        }
+            using var tx = await _context.Database.BeginTransactionAsync();
 
-        return refreshToken;
+            var current = await _repository.FindActiveByStravaAthleteIdAndDeviceIdAsync(stravaAthleteId, deviceId);
+
+            var rawToken = Generate();
+            var hashedToken = Hash(rawToken);
+            var refreshToken = RefreshToken.Create(stravaAthleteId, deviceId, hashedToken, DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays));
+
+            try
+            {
+                if (current is not null)
+                {
+                    current.ReplaceWith(refreshToken.Id);
+                }
+                await _repository.AddAsync(refreshToken);
+
+                await _context.SaveChangesAsync();
+                await tx.CommitAsync();
+            }
+            catch (DbUpdateException)
+            {
+                throw new RefreshTokenPersistenceException();
+            }
+
+            return rawToken;
+        });
     }
 
     /// <inheritdoc/>

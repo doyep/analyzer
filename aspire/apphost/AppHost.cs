@@ -15,7 +15,7 @@ var api = builder
     .WaitFor(postgres)
     .WithExternalHttpEndpoints();
 
-var web = builder
+builder
     .AddPnpmApp("web", "../../apps/web")
     .WithReference(api)
     .WaitFor(api);

@@ -11,6 +11,13 @@ namespace Doyep.Analyzer.Infrastructure.Persistence;
 public class RefreshTokenRepository(AnalyzerDbContext _context) : IRefreshTokenRepository
 {
     /// <inheritdoc/>
+    public async Task<RefreshToken?> FindActiveByStravaAthleteIdAndDeviceIdAsync(long stravaAthleteId, Guid deviceId)
+    {
+        return await _context.RefreshTokens
+            .FirstOrDefaultAsync(rt => rt.StravaAthleteId == stravaAthleteId && rt.DeviceId == deviceId && rt.RevokedAt == null && DateTimeOffset.UtcNow < rt.ExpiresAt);
+    }
+
+    /// <inheritdoc/>
     public async Task AddAsync(RefreshToken refreshToken)
     {
         _context.RefreshTokens.Add(refreshToken);

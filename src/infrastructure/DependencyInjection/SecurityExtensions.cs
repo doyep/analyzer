@@ -4,6 +4,7 @@ using Doyep.Analyzer.Infrastructure.Security;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Infrastructure;
 
@@ -16,6 +17,12 @@ public static class SecurityExtensions
              .SetApplicationName("DoyepAnalyzer");
 
         services.AddSingleton<IEncryptionService, DataProtectionEncryptionService>();
+
+        services.AddOptions<StateOptions>()
+            .BindConfiguration(StateOptions.SectionName)
+            .ValidateOnStart();
+        services.AddSingleton<IValidateOptions<StateOptions>, StateOptionsValidator>();
+        services.AddScoped<IStateService, StateService>();
 
         return services;
     }

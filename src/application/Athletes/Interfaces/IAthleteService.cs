@@ -16,5 +16,5 @@ public interface IAthleteService
     /// </summary>
     /// <param name="stravaAthlete">The Strava summary athlete information.</param>
     /// <returns>A result containing the athlete if successful, or an error if the athlete is not authorized or if there was an issue with finding or creating the athlete.</returns>
-    public Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete);
+    Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete);
 }

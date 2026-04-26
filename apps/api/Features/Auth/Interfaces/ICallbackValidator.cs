@@ -16,7 +16,6 @@ public interface ICallbackValidator
     /// <param name="code">The authorization code parameter from the callback request.</param>
     /// <param name="scope">The scope parameter from the callback request.</param>
     /// <param name="state">The state parameter from the callback request.</param>
-    /// <param name="context">The HTTP context for the callback request.</param>
     /// <returns>An <see cref="Error"/> if validation fails, otherwise null.</returns>
-    Error? ValidateCallbackRequest(string? error, string? code, string? scope, string? state, HttpContext context);
+    Error? ValidateCallbackRequest(string? error, string? code, string? scope, string? state);
 }

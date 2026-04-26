@@ -1,4 +1,5 @@
 using Doyep.Analyzer.Application.Athletes;
+using Doyep.Analyzer.Application.Security;
 using Doyep.Analyzer.Application.Strava;
 using Doyep.Analyzer.Domain;
 
@@ -11,13 +12,18 @@ public class AuthService(
     IAthleteService _athleteService,
     IJwtTokenService _jwtTokenService,
     IRefreshTokenService _refreshTokenService,
+    IStateService _stateService,
     IStravaAuthenticationService _stravaAuthenticationService,
     IStravaTokenRepository _stravaTokenRepository
 ) : IAuthService
 {
     /// <inheritdoc/>
-    public async Task<Result<AuthTokens, Error>> LoginAsync(string authorizationCode)
+    public async Task<Result<AuthTokens, Error>> LoginAsync(string authorizationCode, string state)
     {
+        var statePayloadResult = ConsumeState(state);
+        if (statePayloadResult.IsFailure)
+            return Result<AuthTokens, Error>.Failure(statePayloadResult.Error);
+
         var stravaTokenResponseResult = await ExchangeTokenAsync(authorizationCode);
         if (stravaTokenResponseResult.IsFailure)
             return Result<AuthTokens, Error>.Failure(stravaTokenResponseResult.Error);
@@ -30,7 +36,16 @@ public class AuthService(
         if (saveResult.IsFailure)
             return Result<AuthTokens, Error>.Failure(saveResult.Error);
 
-        return await GenerateTokensAsync(athleteResult.Value);
+        return await GenerateTokensAsync(athleteResult.Value, statePayloadResult.Value);
+    }
+
+    private Result<StatePayload, Error> ConsumeState(string state)
+    {
+        var statePayload = _stateService.Consume(state);
+        if (statePayload is null)
+            return Result<StatePayload, Error>.Failure(AuthErrors.InvalidState);
+
+        return Result<StatePayload, Error>.Success(statePayload);
     }
 
     private async Task<Result<StravaAuthTokenResponse, Error>> ExchangeTokenAsync(string authorizationCode)
@@ -73,12 +88,12 @@ public class AuthService(
         }
     }
 
-    private async Task<Result<AuthTokens, Error>> GenerateTokensAsync(Athlete athlete)
+    private async Task<Result<AuthTokens, Error>> GenerateTokensAsync(Athlete athlete, StatePayload statePayload)
     {
         try
         {
             var jwtToken = _jwtTokenService.Generate(athlete);
-            var refreshToken = await _refreshTokenService.IssueRefreshTokenAsync(athlete.StravaAthleteId);
+            var refreshToken = await _refreshTokenService.IssueRefreshTokenAsync(athlete.StravaAthleteId, statePayload.DeviceId);
 
             return Result<AuthTokens, Error>.Success(new AuthTokens
             {

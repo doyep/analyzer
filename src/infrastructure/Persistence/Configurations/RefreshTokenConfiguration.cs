@@ -23,6 +23,11 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .ValueGeneratedNever();
 
         builder.Property(rt => rt.StravaAthleteId)
+            .ValueGeneratedNever()
+            .IsRequired();
+
+        builder.Property(rt => rt.DeviceId)
+            .ValueGeneratedNever()
             .IsRequired();
 
         builder.Property(rt => rt.HashedToken)
@@ -38,20 +43,30 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         builder.Property(rt => rt.RevokedAt)
             .IsRequired(false);
 
+        builder.Property(rt => rt.ReplacedByTokenId)
+            .IsRequired(false);
+
         builder.Ignore(rt => rt.IsActive);
 
         // Indexes
-        builder.HasIndex(rt => rt.ExpiresAt);
-
         builder.HasIndex(rt => rt.HashedToken)
             .IsUnique();
 
-        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.RevokedAt, rt.ExpiresAt });
+        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId, rt.RevokedAt, rt.ExpiresAt });
+
+        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId });
+
+        builder.HasIndex(rt => new { rt.RevokedAt, rt.ExpiresAt });
 
         // Relations
         builder.HasOne<Athlete>()
             .WithMany()
             .HasForeignKey(rt => rt.StravaAthleteId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne<RefreshToken>()
+            .WithOne() // Consider changing to WithMany if you want to allow a token to be replaced by multiple tokens over time, but for now we assume a one-to-one relationship where one token can only be replaced by one other token.
+            .HasForeignKey<RefreshToken>(rt => rt.ReplacedByTokenId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

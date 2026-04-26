@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 
 using Doyep.Analyzer.Application.Auth;
+using Doyep.Analyzer.Application.Security;
 using Doyep.Analyzer.Application.Strava;
 
 using Microsoft.AspNetCore.WebUtilities;
@@ -13,15 +14,19 @@ namespace Doyep.Analyzer.Infrastructure.Strava;
 /// </summary>
 public class StravaAuthenticationService(
     HttpClient httpClient,
+    IStateService stateService,
     IOptions<StravaOptions> options
 ) : IStravaAuthenticationService
 {
     private readonly HttpClient _httpClient = httpClient;
+    private readonly IStateService _stateService = stateService;
     private readonly StravaOptions _options = options.Value;
 
     /// <inheritdoc/>
-    public string GenerateLoginUrl(string state)
+    public string GenerateLoginUrl(Guid deviceId)
     {
+        var state = _stateService.Create(deviceId);
+
         var queries = new Dictionary<string, string?>
         {
             { "client_id", _options.ClientId },
