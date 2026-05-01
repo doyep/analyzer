@@ -11,6 +11,13 @@ namespace Doyep.Analyzer.Infrastructure.Persistence;
 public class RefreshTokenRepository(AnalyzerDbContext _context) : IRefreshTokenRepository
 {
     /// <inheritdoc/>
+    public async Task<RefreshToken?> FindByHashedTokenAsync(string hashedToken)
+    {
+        return await _context.RefreshTokens
+            .FirstOrDefaultAsync(rt => rt.HashedToken == hashedToken);
+    }
+
+    /// <inheritdoc/>
     public async Task<RefreshToken?> FindActiveByStravaAthleteIdAndDeviceIdAsync(long stravaAthleteId, Guid deviceId)
     {
         return await _context.RefreshTokens
@@ -25,7 +32,7 @@ public class RefreshTokenRepository(AnalyzerDbContext _context) : IRefreshTokenR
     }
 
     /// <inheritdoc/>
-    public async Task TryRevokeAsync(string hashedRefreshToken)
+    public async Task RevokeAsync(string hashedRefreshToken)
     {
         var token = await _context.RefreshTokens
             .FirstOrDefaultAsync(rt => rt.HashedToken == hashedRefreshToken && rt.RevokedAt == null && DateTimeOffset.UtcNow < rt.ExpiresAt);
@@ -38,10 +45,10 @@ public class RefreshTokenRepository(AnalyzerDbContext _context) : IRefreshTokenR
     }
 
     /// <inheritdoc/>
-    public async Task RevokeAllActiveByStravaAthleteIdAsync(long stravaAthleteId)
+    public async Task RevokeByStravaAthleteIdAndDeviceIdAsync(long stravaAthleteId, Guid deviceId)
     {
         var tokens = await _context.RefreshTokens
-            .Where(rt => rt.StravaAthleteId == stravaAthleteId && rt.RevokedAt == null && DateTimeOffset.UtcNow < rt.ExpiresAt)
+            .Where(rt => rt.StravaAthleteId == stravaAthleteId && rt.DeviceId == deviceId && rt.RevokedAt == null && DateTimeOffset.UtcNow < rt.ExpiresAt)
             .ToListAsync();
 
         foreach (var token in tokens)

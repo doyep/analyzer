@@ -19,7 +19,6 @@ public interface IAthleteRepository
 
     /// <summary>
     /// Updates an existing athlete's information in the repository.
-    /// TODO : DISCUSSION PIERRE - C'est quoi Unit of Work / SaveChange() / EF Tracking ?
     /// </summary>
     Task UpdateAsync(Athlete athlete);
 }

@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 
+using Doyep.Analyzer.Application.Athletes;
 using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Domain;
 using Doyep.Analyzer.Infrastructure.Persistence;
@@ -14,8 +15,9 @@ namespace Doyep.Analyzer.Infrastructure.Auth;
 /// </summary>
 public class RefreshTokenService(
     AnalyzerDbContext _context,
-    IRefreshTokenRepository _repository,
-    IOptions<RefreshTokenOptions> options
+    IAthleteRepository _athleteRepository,
+    IOptions<RefreshTokenOptions> options,
+    IRefreshTokenRepository _refreshTokenRepository
 ) : IRefreshTokenService
 {
     private readonly RefreshTokenOptions _options = options.Value;
@@ -29,37 +31,85 @@ public class RefreshTokenService(
         {
             using var tx = await _context.Database.BeginTransactionAsync();
 
-            var current = await _repository.FindActiveByStravaAthleteIdAndDeviceIdAsync(stravaAthleteId, deviceId);
+            var currentActiveToken = await _refreshTokenRepository.FindActiveByStravaAthleteIdAndDeviceIdAsync(stravaAthleteId, deviceId);
+            currentActiveToken?.Revoke();
 
             var rawToken = Generate();
             var hashedToken = Hash(rawToken);
-            var refreshToken = RefreshToken.Create(stravaAthleteId, deviceId, hashedToken, DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays));
-
-            try
-            {
-                if (current is not null)
-                {
-                    current.ReplaceWith(refreshToken.Id);
-                }
-                await _repository.AddAsync(refreshToken);
-
-                await _context.SaveChangesAsync();
-                await tx.CommitAsync();
-            }
-            catch (DbUpdateException)
-            {
-                throw new RefreshTokenPersistenceException();
-            }
+            var refreshToken = RefreshToken.Create(
+                stravaAthleteId,
+                deviceId,
+                hashedToken,
+                DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays)
+            );
+            await _refreshTokenRepository.AddAsync(refreshToken);
+            await _context.SaveChangesAsync();
+            await tx.CommitAsync();
 
             return rawToken;
         });
     }
 
     /// <inheritdoc/>
-    public async Task TryRevokeAsync(string refreshToken)
+    public async Task<RefreshResult> RefreshAsync(string rawToken)
+    {
+        var strategy = _context.Database.CreateExecutionStrategy();
+
+        return await strategy.ExecuteAsync(async () =>
+        {
+            using var tx = await _context.Database.BeginTransactionAsync();
+
+            var hashedToken = Hash(rawToken);
+            var currentToken = await _refreshTokenRepository.FindByHashedTokenAsync(hashedToken);
+
+            if (currentToken is null)
+                throw new InvalidOperationException("Invalid refresh token.");
+
+            if (currentToken.RevokedAt is not null)
+            {
+                if (currentToken.ReplacedByTokenId is not null)
+                {
+                    await _refreshTokenRepository.RevokeByStravaAthleteIdAndDeviceIdAsync(currentToken.StravaAthleteId, currentToken.DeviceId);
+
+                    await _context.SaveChangesAsync();
+                    await tx.CommitAsync();
+
+                    throw new RefreshTokenReusalException();
+                }
+
+                throw new RefreshTokenRevokedException();
+            }
+
+            if (currentToken.IsExpired)
+                throw new RefreshTokenExpiredException();
+
+            var newRawToken = Generate();
+            var newHashedToken = Hash(newRawToken);
+            var newRefreshToken = RefreshToken.Create(
+                currentToken.StravaAthleteId,
+                currentToken.DeviceId,
+                newHashedToken,
+                DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays)
+            );
+            currentToken.ReplaceWith(newRefreshToken.Id);
+            await _context.SaveChangesAsync();
+
+            await _refreshTokenRepository.AddAsync(newRefreshToken);
+            await _context.SaveChangesAsync();
+
+            await tx.CommitAsync();
+
+            var athlete = await _athleteRepository.FindByStravaAthleteIdAsync(currentToken.StravaAthleteId);
+
+            return new RefreshResult(newRawToken, athlete!);
+        });
+    }
+
+    /// <inheritdoc/>
+    public async Task RevokeAsync(string refreshToken)
     {
         var hashedToken = Hash(refreshToken);
-        await _repository.TryRevokeAsync(hashedToken);
+        await _refreshTokenRepository.RevokeAsync(hashedToken);
     }
 
     /// <summary>

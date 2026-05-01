@@ -51,7 +51,12 @@ public class RefreshToken
     /// <summary>
     /// Indicate whether the refresh token is currently active (not revoked and not expired).
     /// </summary>
-    public bool IsActive => RevokedAt == null && DateTimeOffset.UtcNow < ExpiresAt;
+    public bool IsActive => RevokedAt is null && !IsExpired;
+
+    /// <summary>
+    /// Indicates whether the refresh token has expired based on the current date and time compared to the ExpiresAt property.
+    /// </summary>
+    public bool IsExpired => DateTimeOffset.UtcNow >= ExpiresAt;
 
     /// <summary>
     /// Revokes the refresh token by setting the revocation timestamp.

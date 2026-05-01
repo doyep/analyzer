@@ -39,6 +39,7 @@ public class AuthService(
         return await GenerateTokensAsync(athleteResult.Value, statePayloadResult.Value);
     }
 
+    // TODO: Maybe _stateService should return a Result
     private Result<StatePayload, Error> ConsumeState(string state)
     {
         var statePayload = _stateService.Consume(state);
@@ -48,6 +49,7 @@ public class AuthService(
         return Result<StatePayload, Error>.Success(statePayload);
     }
 
+    // TODO: Maybe _stravaAuthenticationService should return a Result
     private async Task<Result<StravaAuthTokenResponse, Error>> ExchangeTokenAsync(string authorizationCode)
     {
         try
@@ -61,6 +63,7 @@ public class AuthService(
         }
     }
 
+    // TODO: Maybe _athleteService should return a Result
     private async Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaAuthTokenResponse stravaTokenResponse)
     {
         var athleteResult = await _athleteService.GetAuthorizedAthleteAsync(stravaTokenResponse.Athlete);
@@ -108,8 +111,28 @@ public class AuthService(
     }
 
     /// <inheritdoc/>
+    public async Task<Result<AuthTokens, Error>> RefreshTokenAsync(string refreshToken)
+    {
+        try
+        {
+            var refreshTokenResult = await _refreshTokenService.RefreshAsync(refreshToken);
+            var jwtToken = _jwtTokenService.Generate(refreshTokenResult.Athlete);
+
+            return Result<AuthTokens, Error>.Success(new AuthTokens
+            {
+                JwtToken = jwtToken,
+                RefreshToken = refreshTokenResult.RawRefreshToken
+            });
+        }
+        catch (Exception)
+        {
+            return Result<AuthTokens, Error>.Failure(AuthErrors.FailedToRefreshToken);
+        }
+    }
+
+    /// <inheritdoc/>
     public async Task LogoutAsync(string refreshToken)
     {
-        await _refreshTokenService.TryRevokeAsync(refreshToken);
+        await _refreshTokenService.RevokeAsync(refreshToken);
     }
 }

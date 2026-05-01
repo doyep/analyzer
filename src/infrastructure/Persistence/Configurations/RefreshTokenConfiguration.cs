@@ -48,6 +48,8 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         builder.Ignore(rt => rt.IsActive);
 
+        builder.Ignore(rt => rt.IsExpired);
+
         // Indexes
         builder.HasIndex(rt => rt.HashedToken)
             .IsUnique();
@@ -56,6 +58,10 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId });
 
+        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId })
+            .IsUnique()
+            .HasFilter("\"RevokedAt\" IS NULL");
+
         builder.HasIndex(rt => new { rt.RevokedAt, rt.ExpiresAt });
 
         // Relations
@@ -63,10 +69,5 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .WithMany()
             .HasForeignKey(rt => rt.StravaAthleteId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasOne<RefreshToken>()
-            .WithOne() // Consider changing to WithMany if you want to allow a token to be replaced by multiple tokens over time, but for now we assume a one-to-one relationship where one token can only be replaced by one other token.
-            .HasForeignKey<RefreshToken>(rt => rt.ReplacedByTokenId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

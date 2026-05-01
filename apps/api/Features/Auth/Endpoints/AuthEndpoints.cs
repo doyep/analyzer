@@ -15,6 +15,7 @@ public static class AuthEndpoints
 
         authGroup.MapLoginEndpoint();
         authGroup.MapCallbackEndpoint();
+        authGroup.MapRefreshEndpoint();
         authGroup.MapLogoutEndpoint();
 
         return app;

@@ -49,4 +49,10 @@ public static class AuthErrors
     /// </summary>
     public static readonly Error FailedToGenerateTokens =
         new("auth.failed_to_generate_tokens", "Failed to generate authentication tokens.", 500);
+
+    /// <summary>
+    /// Indicates that there was a failure when trying to refresh the authentication tokens (JWT and refresh token), which could be due to an unexpected error in the token generation logic or an issue with the underlying services.
+    /// </summary>
+    public static readonly Error FailedToRefreshToken =
+        new("auth.failed_to_refresh_token", "Failed to refresh authentication tokens.", 401);
 }
