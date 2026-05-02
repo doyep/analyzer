@@ -40,3 +40,36 @@ public class Result<T, TError>
     public static Result<T, TError> Failure(TError error)
         => new(error);
 }
+
+/// <summary>
+/// Represents the result of an operation that can either be a success (with no value) or a failure with an error of type TError.
+/// </summary>
+/// <typeparam name="TError">The type of the error in case of failure.</typeparam>
+public class Result<TError>
+{
+    public bool IsSuccess { get; }
+    public bool IsFailure => !IsSuccess;
+    private readonly TError? _error;
+
+    public TError Error => IsFailure
+        ? _error!
+        : throw new InvalidOperationException("Cannot access Error when the result is a success.");
+
+    private Result()
+    {
+        IsSuccess = true;
+        _error = default;
+    }
+
+    private Result(TError error)
+    {
+        IsSuccess = false;
+        _error = error;
+    }
+
+    public static Result<TError> Success()
+        => new();
+
+    public static Result<TError> Failure(TError error)
+        => new(error);
+}

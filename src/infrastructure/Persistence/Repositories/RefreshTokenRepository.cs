@@ -27,8 +27,15 @@ public class RefreshTokenRepository(AnalyzerDbContext _context) : IRefreshTokenR
     /// <inheritdoc/>
     public async Task AddAsync(RefreshToken refreshToken)
     {
-        _context.RefreshTokens.Add(refreshToken);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.RefreshTokens.Add(refreshToken);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            throw new RefreshTokenPersistenceException();
+        }
     }
 
     /// <inheritdoc/>

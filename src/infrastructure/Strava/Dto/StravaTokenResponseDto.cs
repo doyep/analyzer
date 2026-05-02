@@ -32,7 +32,7 @@ public abstract record StravaTokenResponseDto
     public required string RefreshToken { get; init; }
 
     /// <summary>
-    /// The access token, to be used to fetch personnal data for this user.
+    /// The access token, to be used to fetch personal data for this user.
     /// </summary>
     [property: JsonPropertyName("access_token")]
     public required string AccessToken { get; init; }

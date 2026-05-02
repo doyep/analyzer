@@ -58,10 +58,6 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 
         builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId });
 
-        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId })
-            .IsUnique()
-            .HasFilter("\"RevokedAt\" IS NULL");
-
         builder.HasIndex(rt => new { rt.RevokedAt, rt.ExpiresAt });
 
         // Relations

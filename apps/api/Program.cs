@@ -32,6 +32,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -39,7 +41,5 @@ app.MapAuthEndpoints();
 app.MapApiEndpoints();
 
 app.MapReverseProxy();
-
-app.UseHttpsRedirection();
 
 app.Run();

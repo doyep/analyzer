@@ -92,11 +92,10 @@ public class RefreshTokenService(
                 DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays)
             );
             currentToken.ReplaceWith(newRefreshToken.Id);
-            await _context.SaveChangesAsync();
 
             await _refreshTokenRepository.AddAsync(newRefreshToken);
-            await _context.SaveChangesAsync();
 
+            await _context.SaveChangesAsync();
             await tx.CommitAsync();
 
             var athlete = await _athleteRepository.FindByStravaAthleteIdAsync(currentToken.StravaAthleteId);

@@ -6,7 +6,8 @@ namespace Doyep.Analyzer.Domain;
 public class RefreshToken
 {
     /// <summary>
-    /// The unique identifier for the refresh token. This is used to track and manage refresh tokens in the database. It is not exposed to the client and is not used in the token exchange process.
+    /// The unique identifier for the refresh token. This is used to track and manage refresh tokens in the database.
+    /// It is not exposed to the client and is not used in the token exchange process.
     /// </summary>
     public Guid Id { get; init; }
 
@@ -42,9 +43,9 @@ public class RefreshToken
     public DateTimeOffset? RevokedAt { get; private set; }
 
     /// <summary>
-    /// The ID of the refresh token that replaced this token, if any. This can be used to track token rotation and ensure that when a new token is issued, the old token is revoked and linked to the new token for audit purposes.
-    /// If null, this token has not been replaced.
-    /// Note: The relationship between tokens (one-to-one or one-to-many) should be defined based on your application's requirements. In this implementation, we assume a one-to-one relationship where one token can only be replaced by one other token, but this can be adjusted if needed.
+    /// The ID of the refresh token that replaced this token, if any. This can be used to track token rotation
+    /// and ensure that when a new token is issued, the old token is revoked and linked to the new token for
+    /// audit purposes. If null, this token has not been replaced.
     /// </summary>
     public Guid? ReplacedByTokenId { get; private set; }
 

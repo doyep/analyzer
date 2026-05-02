@@ -76,18 +76,18 @@ public class AuthService(
         return Result<Athlete, Error>.Success(athleteResult.Value);
     }
 
-    private async Task<Result<Task, Error>> SaveStravaTokenAsync(StravaAuthTokenResponse stravaTokenResponse)
+    private async Task<Result<Error>> SaveStravaTokenAsync(StravaAuthTokenResponse stravaTokenResponse)
     {
         try
         {
             var stravaToken = StravaToken.CreateFrom(stravaTokenResponse);
             await _stravaTokenRepository.SaveAsync(stravaToken);
 
-            return Result<Task, Error>.Success(Task.CompletedTask);
+            return Result<Error>.Success();
         }
         catch (StravaTokenPersistenceException)
         {
-            return Result<Task, Error>.Failure(AuthErrors.FailedToSaveStravaToken);
+            return Result<Error>.Failure(AuthErrors.FailedToSaveStravaToken);
         }
     }
 

@@ -79,7 +79,7 @@ public class StravaAuthenticationService(
             { "access_token", accessToken }
         };
 
-        var url = QueryHelpers.AddQueryString("oauth/deauthorize", queries);
+        var url = QueryHelpers.AddQueryString(StravaEndpoints.DeauthorizeEndpoint, queries);
 
         var response = await _httpClient.PostAsync(url, null);
 
