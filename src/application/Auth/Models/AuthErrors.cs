@@ -27,6 +27,12 @@ public static class AuthErrors
         new("auth.invalid_scope", "Invalid scope parameter.", 400);
 
     /// <summary>
+    /// Indicates that the authorization code parameter is missing.
+    /// </summary>
+    public static readonly Error MissingAuthorizationCode =
+        new("auth.missing_authorization_code", "Missing authorization code parameter.", 400);
+
+    /// <summary>
     /// Indicates that an error occurred during the token exchange process with Strava.
     /// </summary>
     public static readonly Error StravaError =
@@ -43,4 +49,10 @@ public static class AuthErrors
     /// </summary>
     public static readonly Error FailedToGenerateTokens =
         new("auth.failed_to_generate_tokens", "Failed to generate authentication tokens.", 500);
+
+    /// <summary>
+    /// Indicates that there was a failure when trying to refresh the authentication tokens (JWT and refresh token), which could be due to an unexpected error in the token generation logic or an issue with the underlying services.
+    /// </summary>
+    public static readonly Error FailedToRefreshToken =
+        new("auth.failed_to_refresh_token", "Failed to refresh authentication tokens.", 401);
 }

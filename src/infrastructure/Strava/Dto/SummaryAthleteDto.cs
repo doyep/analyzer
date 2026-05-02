@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 namespace Doyep.Analyzer.Infrastructure.Strava;
 
 /// <summary>
-/// Represents a summary of Strava Athlete informations.
+/// Represents a summary of Strava Athlete information.
 /// </summary>
 public record SummaryAthleteDto
 {

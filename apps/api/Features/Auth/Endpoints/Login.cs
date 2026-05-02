@@ -1,7 +1,8 @@
-using Doyep.Analyzer.Api.Features.Auth;
 using Doyep.Analyzer.Application.Strava;
+using Doyep.Analyzer.Infrastructure;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Api;
 
@@ -12,22 +13,21 @@ public static class Login
 {
     public static IEndpointRouteBuilder MapLoginEndpoint(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/login", async (
-            HttpContext context,
-            [FromServices] IAuthStateService authStateService,
-            [FromServices] IStravaAuthenticationService stravaService) =>
+        app.MapGet("/login", (
+            string deviceId,
+            [FromServices] IStravaAuthenticationService stravaService,
+            [FromServices] IOptions<FrontendOptions> frontendOptions) =>
         {
-            var state = authStateService.GenerateState(context);
-            return HandleGenerateLoginUrl(state, stravaService);
+            var appBaseUrl = frontendOptions.Value.BaseUrl;
+
+            if (!Guid.TryParse(deviceId, out var deviceGuid))
+                return Results.Redirect($"{appBaseUrl}/error?code=invalid_device_id");
+
+            return Results.Redirect(stravaService.GenerateLoginUrl(deviceGuid));
         })
             .WithDescription("Redirects the user to the Strava login page.\n\nRedirections doesnt work in Scalar, you can't test this endpoint in this environment.")
             .Produces(StatusCodes.Status302Found);
 
         return app;
-    }
-
-    private static IResult HandleGenerateLoginUrl(string state, IStravaAuthenticationService strava)
-    {
-        return Results.Redirect(strava.GenerateLoginUrl(state));
     }
 }

@@ -10,7 +10,7 @@ public class JwtOptions
     /// <summary>
     /// Section name of appsettings.json
     /// </summary>
-    public const string SectionName = "Jwt";
+    public const string SectionName = "Auth:Jwt";
 
     /// <summary>
     /// The secret used for signing JWT tokens. This value should be stored securely and should be of sufficient length and complexity to prevent brute-force attacks.

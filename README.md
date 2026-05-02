@@ -8,10 +8,10 @@ At this moment, this repository only contains WebApi. The Ui will be added somed
 
 This API need the following informations :
 - `AllowedHosts`
+- `Auth.Jwt.Secret`
+- `Auth.RefreshToken.ExpirationInDays`
 - `Frontend.BaseUrl`
 - `ConnectionStrings.DoyepAnalyzerDb`
-- `Jwt.Secret`
-- `RefreshToken.ExpirationInDays`
 - `Strava.ClientId` 
 - `Strava.ClientSecret`
 - `Strava.RedirectUri`
@@ -21,10 +21,10 @@ You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Analyzer.Api layer)
 ```bash
 dotnet user-secrets init
 dotnet user-secrets set "AllowedHosts" "..."
+dotnet user-secrets set "Auth:Jwt:Secret" "..."
+dotnet user-secrets set "Auth:RefreshToken:ExpirationInDays" "..."
 dotnet user-secrets set "Frontend:BaseUrl" "..."
 dotnet user-secrets set "ConnectionStrings:DoyepAnalyzerDb" "..."
-dotnet user-secrets set "Jwt:Secret" "..."
-dotnet user-secrets set "RefreshToken:ExpirationInDays" "..."
 dotnet user-secrets set "Strava:ClientId" "..."
 dotnet user-secrets set "Strava:ClientSecret" "..."
 dotnet user-secrets set "Strava:RedirectUri" "..."

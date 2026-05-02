@@ -23,6 +23,11 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .ValueGeneratedNever();
 
         builder.Property(rt => rt.StravaAthleteId)
+            .ValueGeneratedNever()
+            .IsRequired();
+
+        builder.Property(rt => rt.DeviceId)
+            .ValueGeneratedNever()
             .IsRequired();
 
         builder.Property(rt => rt.HashedToken)
@@ -38,15 +43,22 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         builder.Property(rt => rt.RevokedAt)
             .IsRequired(false);
 
+        builder.Property(rt => rt.ReplacedByTokenId)
+            .IsRequired(false);
+
         builder.Ignore(rt => rt.IsActive);
 
-        // Indexes
-        builder.HasIndex(rt => rt.ExpiresAt);
+        builder.Ignore(rt => rt.IsExpired);
 
+        // Indexes
         builder.HasIndex(rt => rt.HashedToken)
             .IsUnique();
 
-        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.RevokedAt, rt.ExpiresAt });
+        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId, rt.RevokedAt, rt.ExpiresAt });
+
+        builder.HasIndex(rt => new { rt.StravaAthleteId, rt.DeviceId });
+
+        builder.HasIndex(rt => new { rt.RevokedAt, rt.ExpiresAt });
 
         // Relations
         builder.HasOne<Athlete>()
