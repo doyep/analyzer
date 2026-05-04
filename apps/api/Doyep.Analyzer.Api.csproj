@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\application\Doyep.Analyzer.Application.csproj" />
     <ProjectReference Include="..\..\src\infrastructure\Doyep.Analyzer.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\aspire\servicedefaults\Doyep.Analyzer.Aspire.ServiceDefaults.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,9 +20,6 @@
 
     <!-- For JWT authentication -->
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
-
-    <!-- For ReverseProxy -->
-    <PackageReference Include="Yarp.ReverseProxy" />
   </ItemGroup>
 
 </Project>

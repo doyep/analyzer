@@ -12,8 +12,7 @@ builder.Services
     .AddApi()
     .AddApplication()
     .AddInfrastructure()
-    .AddJwtAuthentication()
-    .AddReverseProxy(builder.Configuration);
+    .AddJwtAuthentication();
 
 // TODO : Properly configure Policies
 builder.Services
@@ -39,7 +38,5 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 app.MapApiEndpoints();
-
-app.MapReverseProxy();
 
 app.Run();
