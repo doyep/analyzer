@@ -22,5 +22,7 @@ public interface IJwtTokenService
     ///   </item>
     /// </list>
     /// </summary>
+    /// <param name="athlete">The athlete for whom to generate the JWT token.</param>
+    /// <returns>A JWT token string containing the athlete's claims.</returns>
     string Generate(Athlete athlete);
 }

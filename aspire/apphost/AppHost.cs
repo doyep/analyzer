@@ -20,7 +20,7 @@ var web = builder
     .AddPnpmApp("web", "../../apps/web")
     .WithPnpmPackageInstallation()
     .WithReference(api)
-    .WithHttpEndpoint(env: "PORT")
+    .WithHttpEndpoint(port: 4200) // (env: "PORT") for Aspire dynamic port assignment 
     .WithMappedEndpointPort()
     .WithExternalHttpEndpoints();
 

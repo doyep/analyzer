@@ -27,14 +27,21 @@ public class AthleteRepository(AnalyzerDbContext _context) : IAthleteRepository
         }
         catch (DbUpdateException)
         {
-            throw new DuplicateAthleteException(athlete.StravaAthleteId);
+            throw new AthletePersistenceException(athlete.StravaAthleteId);
         }
     }
 
     /// <inheritdoc/>
     public async Task UpdateAsync(Athlete athlete)
     {
-        _context.Athletes.Update(athlete);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.Athletes.Update(athlete);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            throw new AthletePersistenceException(athlete.StravaAthleteId);
+        }
     }
 }

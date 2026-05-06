@@ -8,12 +8,6 @@ namespace Doyep.Analyzer.Application.Athletes;
 public static class AthleteErrors
 {
     /// <summary>
-    /// Indicates that no athlete was found with the specified Strava ID, which can occur when trying to access or manipulate an athlete that does not exist in the repository.
-    /// </summary>
-    public static readonly Error NotFoundAthlete =
-        new("athlete.not_found", "No athlete found with the specified Strava ID.", 404);
-
-    /// <summary>
     /// Indicates that the authenticated Strava athlete is not authorized to access the application,
     /// likely because their Strava ID is not present in the application's whitelist of allowed users.
     /// </summary>

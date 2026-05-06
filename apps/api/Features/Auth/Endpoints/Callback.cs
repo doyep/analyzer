@@ -1,8 +1,9 @@
+using Doyep.Analyzer.Application;
 using Doyep.Analyzer.Application.Auth;
-using Doyep.Analyzer.Infrastructure;
+using Doyep.Analyzer.Application.Security;
+using Doyep.Analyzer.Application.Strava;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Doyep.Analyzer.Api.Features.Auth;
 
@@ -23,36 +24,71 @@ public static class Callback
             string? scope,
             string? state,
             HttpContext context,
-            [FromServices] IAuthService authService,
-            [FromServices] IAuthCookieService cookieService,
-            [FromServices] ICallbackValidator validator,
-            [FromServices] IOptions<FrontendOptions> frontendOptions) =>
+            [FromServices] IAuthCookieService authCookieService,
+            [FromServices] ILoginService loginService,
+            [FromServices] IStateService stateService) =>
         {
-            var appBaseUrl = frontendOptions.Value.BaseUrl;
-
-            var validationError = validator.ValidateCallbackRequest(error, code, scope, state);
-            if (validationError is not null)
+            var validationResult = ValidateCallbackRequest(error, code, scope, state);
+            if (validationResult.IsFailure)
             {
-                cookieService.ClearAuthCookies(context);
-                return Results.Redirect($"{appBaseUrl}/error?code={validationError.Code}");
+                authCookieService.ClearAuthCookies(context);
+                return Results.Redirect($"/error?code={validationResult.Error.Code}");
             }
 
-            var result = await authService.LoginAsync(code!, state!);
+            var stateResult = stateService.Consume(state!);
+            if (stateResult.IsFailure)
+            {
+                authCookieService.ClearAuthCookies(context);
+                return Results.Redirect($"/error?code={stateResult.Error.Code}");
+            }
+
+            var result = await loginService.LoginWithStravaAsync(code!, stateResult.Value.DeviceId);
             if (result.IsFailure)
             {
-                cookieService.ClearAuthCookies(context);
-                return Results.Redirect($"{appBaseUrl}/error?code={result.Error.Code}");
+                authCookieService.ClearAuthCookies(context);
+                return Results.Redirect($"/error?code={result.Error.Code}");
             }
 
             var tokens = result.Value;
 
-            cookieService.SetAuthCookies(context, tokens.JwtToken, tokens.RefreshToken);
+            authCookieService.SetAuthCookies(context, tokens.JwtToken, tokens.RefreshToken);
 
-            return Results.Redirect(appBaseUrl);
+            return Results.Redirect(stateResult.Value.RedirectUri.ToString() ?? "/");
         })
             .WithDescription("Callback endpoint for handling the Strava OAuth flow. Validates the request (error, state, scope, and authorization code), exchanges the authorization code for Strava tokens, ensures the authenticated athlete is allowed access, and on success issues HTTP-only access and refresh token authentication cookies and redirects the user to the configured frontend base URL (302). If validation or authorization fails, the user is redirected to an appropriate error page.")
             .Produces(StatusCodes.Status302Found);
 
         return app;
+    }
+
+    /// <summary>
+    /// Validates the query parameters received from the Strava OAuth callback request, checking for the
+    /// presence of an error parameter, ensuring the state parameter is valid, verifying that the required
+    /// scope is included, and confirming that the authorization code is present. Returns a Result indicating
+    /// success or failure with an appropriate error if validation fails.
+    /// </summary>
+    /// <param name="error">The error parameter returned by the Strava OAuth callback, if any.</param>
+    /// <param name="code">The authorization code returned by the Strava OAuth callback.</param>
+    /// <param name="scope">The scope parameter returned by the Strava OAuth callback.</param>
+    /// <param name="state">The state parameter returned by the Strava OAuth callback.</param>
+    /// <returns>A Result indicating success or failure with an appropriate error if validation fails.</returns>
+    private static Result<Error> ValidateCallbackRequest(string? error, string? code, string? scope, string? state)
+    {
+        if (string.Equals(error, "access_denied", StringComparison.OrdinalIgnoreCase))
+            return Result<Error>.Failure(LoginErrors.AccessDenied);
+
+        if (!string.IsNullOrEmpty(error))
+            return Result<Error>.Failure(new Error("login.strava_error", $"Strava OAuth error: {error}", 500));
+
+        if (string.IsNullOrEmpty(code))
+            return Result<Error>.Failure(LoginErrors.MissingAuthorizationCode);
+
+        if (string.IsNullOrEmpty(state))
+            return Result<Error>.Failure(LoginErrors.InvalidState);
+
+        if (!StravaAuthorizationScopes.HasRequiredScope(scope ?? string.Empty))
+            return Result<Error>.Failure(LoginErrors.InvalidScope);
+
+        return Result<Error>.Success();
     }
 }

@@ -1,11 +1,11 @@
 using Doyep.Analyzer.Domain;
 
 /// <summary>
-/// Represents the result of a refresh token operation, containing the new refresh token and the associated Strava athlete ID. This record is used to encapsulate the outcome of issuing or refreshing a token, providing both the token value and the athlete information in a single object.
+/// Represents the result of a refresh token operation, containing the authenticated athlete and the new refresh token.
 /// </summary>
+/// <param name="Athlete">The authenticated athlete associated with the refresh token.</param>
 /// <param name="RefreshToken">The newly issued refresh token.</param>
-/// <param name="Athlete">The Strava athlete associated with the refresh token.</param>
 public sealed record RefreshResult(
-    string RawRefreshToken,
-    Athlete Athlete
+    Athlete Athlete,
+    string RefreshToken
 );

@@ -3,7 +3,7 @@ namespace Doyep.Analyzer.Api.Features.Auth;
 /// <summary>
 /// Defines constant values for cookie names used in the authentication process.
 /// </summary>
-public static class CookieConstants
+public static class AuthCookieConstants
 {
     /// <summary>
     /// The name of the cookie used to store the access token after successful authentication.

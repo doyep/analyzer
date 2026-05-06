@@ -5,7 +5,9 @@ using Doyep.Analyzer.Infrastructure;
 
 using Scalar.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication
+    .CreateBuilder(args)
+    .AddDefaultHealthChecks();
 
 // Add services to the container.
 builder.Services
@@ -36,7 +38,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapDefaultEndpoints();
 app.MapAuthEndpoints();
-app.MapApiEndpoints();
 
 app.Run();

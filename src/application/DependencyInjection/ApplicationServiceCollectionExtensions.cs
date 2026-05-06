@@ -17,6 +17,8 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddScoped<IAthleteService, AthleteService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<ILoginService, LoginService>();
+        services.AddScoped<RedirectHostsValidator>();
 
         return services;
     }

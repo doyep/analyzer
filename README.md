@@ -34,9 +34,6 @@ dotnet user-secrets set "Strava:RedirectUri" "..."
 
 ```bash
 dotnet ef migrations add InitialCreate -p src/infrastructure -s apps/api
-```
-
-```bash
 dotnet ef database update -p src/infrastructure -s apps/api
 ```
 

@@ -1,7 +1,8 @@
 using System.Text.Json;
 
+using Doyep.Analyzer.Application;
+using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Application.Security;
-using Doyep.Analyzer.Infrastructure.Auth;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.Options;
@@ -9,10 +10,10 @@ using Microsoft.Extensions.Options;
 namespace Doyep.Analyzer.Infrastructure.Security;
 
 /// <summary>
-/// Implements the IStateService interface to create and consume state tokens used in the OAuth authentication flow. The state token contains a device ID and an expiration time, and is protected using ASP.NET Core's data protection API to ensure its integrity and confidentiality.
+/// Implements the <see cref="IStateService"/> interface to manage state tokens used in authentication processes.
+/// This service creates state tokens that encapsulate the device ID, redirect URI, and expiration time, and it
+/// can consume these tokens to retrieve the associated device information.
 /// </summary>
-/// <param name="provider">The data protection provider used to create a data protector for securing the state tokens.</param>
-/// <param name="options">The options containing configuration settings for the state service, such as token expiration time.</param>
 public class StateService(
     IDataProtectionProvider provider,
     IOptions<StateOptions> options
@@ -22,11 +23,12 @@ public class StateService(
     private readonly StateOptions _options = options.Value;
 
     /// <inheritdoc/>
-    public string Create(Guid deviceId)
+    public string Create(Guid deviceId, Uri redirectUri)
     {
         var payload = new StatePayload
         {
             DeviceId = deviceId,
+            RedirectUri = redirectUri,
             ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(_options.ExpirationInMinutes)
         };
 
@@ -36,22 +38,21 @@ public class StateService(
     }
 
     /// <inheritdoc/>
-    public StatePayload? Consume(string state)
+    public Result<StatePayload, Error> Consume(string state)
     {
         try
         {
             var json = _protector.Unprotect(state);
             var payload = JsonSerializer.Deserialize<StatePayload>(json);
 
-
             if (payload is null || payload.ExpiresAt < DateTimeOffset.UtcNow)
-                return null;
+                return Result<StatePayload, Error>.Failure(LoginErrors.InvalidState);
 
-            return payload;
+            return Result<StatePayload, Error>.Success(payload);
         }
         catch
         {
-            return null;
+            return Result<StatePayload, Error>.Failure(LoginErrors.InvalidState);
         }
     }
 }
