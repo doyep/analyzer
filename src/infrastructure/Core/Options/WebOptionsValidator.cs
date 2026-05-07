@@ -3,14 +3,14 @@ using Microsoft.Extensions.Options;
 namespace Doyep.Analyzer.Infrastructure;
 
 /// <summary>
-/// Validates the FrontendOptions to ensure all required fields are set and properly formatted.
+/// Validates the WebOptions to ensure all required fields are set and properly formatted.
 /// </summary>
-public class FrontendOptionsValidator : IValidateOptions<FrontendOptions>
+public class WebOptionsValidator : IValidateOptions<WebOptions>
 {
     /// <summary>
-    /// Validates the FrontendOptions instance. Checks for required fields and proper formatting, especially for the BaseUrl.
+    /// Validates the WebOptions instance. Checks for required fields and proper formatting, especially for the BaseUrl.
     /// </summary>
-    public ValidateOptionsResult Validate(string? name, FrontendOptions options)
+    public ValidateOptionsResult Validate(string? name, WebOptions options)
     {
         var errors = new List<string>();
 

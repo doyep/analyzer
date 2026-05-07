@@ -10,11 +10,10 @@ This API need the following informations :
 - `AllowedHosts`
 - `Auth.Jwt.Secret`
 - `Auth.RefreshToken.ExpirationInDays`
-- `Frontend.BaseUrl`
+- `Web.BaseUrl`
 - `ConnectionStrings.DoyepAnalyzerDb`
 - `Strava.ClientId` 
 - `Strava.ClientSecret`
-- `Strava.RedirectUri`
 
 You can use ENVIRONMENT VARIABLES or User Secrets (Doyep.Analyzer.Api layer)
 
@@ -23,11 +22,10 @@ dotnet user-secrets init
 dotnet user-secrets set "AllowedHosts" "..."
 dotnet user-secrets set "Auth:Jwt:Secret" "..."
 dotnet user-secrets set "Auth:RefreshToken:ExpirationInDays" "..."
-dotnet user-secrets set "Frontend:BaseUrl" "..."
+dotnet user-secrets set "Web:BaseUrl" "..."
 dotnet user-secrets set "ConnectionStrings:DoyepAnalyzerDb" "..."
 dotnet user-secrets set "Strava:ClientId" "..."
 dotnet user-secrets set "Strava:ClientSecret" "..."
-dotnet user-secrets set "Strava:RedirectUri" "..."
 ```
 
 # Migration 

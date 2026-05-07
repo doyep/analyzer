@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Hosting;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var postgresUser = builder.AddParameter("postgres-user", secret: true);
@@ -14,14 +16,27 @@ var api = builder
     .AddProject("api", "../../apps/api/Doyep.Analyzer.Api.csproj")
     .WithReference(postgres)
     .WaitFor(postgres)
-    .WithHttpEndpoint();
+    .WithHttpEndpoint()
+    .WithExternalHttpEndpoints(); // TODO : verify if needed when docker compose is used
+
+if (builder.Environment.IsDevelopment())
+{
+    api.WithUrlForEndpoint("http", ep => new()
+    {
+        Url = "/scalar",
+        DisplayText = "Scalar API"
+    });
+}
 
 var web = builder
     .AddPnpmApp("web", "../../apps/web")
     .WithPnpmPackageInstallation()
     .WithReference(api)
-    .WithHttpEndpoint(port: 4200) // (env: "PORT") for Aspire dynamic port assignment 
+    .WithHttpEndpoint(port: 4200) // WithHttpEndpoint(env: "PORT") for dynamic port assignment 
     .WithMappedEndpointPort()
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints(); // TODO : verify if needed when docker compose is used
+
+api.WithEnvironment("Web__BaseUrl", web.GetEndpoint("http"));
+
 
 builder.Build().Run();

@@ -13,7 +13,7 @@ public static class InfrastructureServiceCollectionExtensions
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services
-            .AddFrontend()
+            .AddWeb()
             .AddTokenServices()
             .AddPersistence()
             .AddSecurity()

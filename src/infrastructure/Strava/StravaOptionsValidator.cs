@@ -22,11 +22,6 @@ public class StravaOptionsValidator : IValidateOptions<StravaOptions>
         if (IsPlaceholder(options.ClientSecret))
             errors.Add("ClientSecret is not configured properly.");
 
-        if (string.IsNullOrWhiteSpace(options.RedirectUri))
-            errors.Add("RedirectUri is required.");
-        if (!Uri.IsWellFormedUriString(options.RedirectUri, UriKind.Absolute))
-            errors.Add("RedirectUri is not configured properly.");
-
         return errors.Count == 0
             ? ValidateOptionsResult.Success
             : ValidateOptionsResult.Fail(errors);

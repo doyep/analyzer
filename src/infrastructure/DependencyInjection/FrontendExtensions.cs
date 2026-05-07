@@ -4,20 +4,20 @@ using Microsoft.Extensions.Options;
 namespace Doyep.Analyzer.Infrastructure;
 
 /// <summary>
-/// Provides extension methods for registering frontend-related services and configurations to the dependency injection container.
+/// Provides extension methods for registering web-related services and configurations to the dependency injection container.
 /// </summary>
-public static class FrontendExtensions
+public static class WebExtensions
 {
     /// <summary>
-    /// Registers frontend-related services and configurations to the dependency injection container.
+    /// Registers web-related services and configurations to the dependency injection container.
     /// </summary>
-    public static IServiceCollection AddFrontend(this IServiceCollection services)
+    public static IServiceCollection AddWeb(this IServiceCollection services)
     {
-        services.AddOptions<FrontendOptions>()
-            .BindConfiguration(FrontendOptions.SectionName)
+        services.AddOptions<WebOptions>()
+            .BindConfiguration(WebOptions.SectionName)
             .ValidateOnStart();
 
-        services.AddSingleton<IValidateOptions<FrontendOptions>, FrontendOptionsValidator>();
+        services.AddSingleton<IValidateOptions<WebOptions>, WebOptionsValidator>();
 
         return services;
     }

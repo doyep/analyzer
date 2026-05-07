@@ -22,9 +22,4 @@ public class StravaOptions
     /// This value should be stored securely.
     /// </summary>
     public required string ClientSecret { get; set; }
-
-    /// <summary>
-    /// Redirect URI registered with Strava for the application. This is the URL to which Strava will redirect users after they authorize the application.
-    /// </summary>
-    public required string RedirectUri { get; set; }
 }
