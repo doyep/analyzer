@@ -18,19 +18,20 @@ public class StravaTokenRepository(AnalyzerDbContext _context) : IStravaTokenRep
     /// <inheritdoc/>
     public async Task SaveAsync(StravaToken stravaToken)
     {
-        var existingToken = await FindByStravaAthleteIdAsync(stravaToken.StravaAthleteId);
+        var token = await FindByStravaAthleteIdAsync(stravaToken.StravaAthleteId);
 
-        if (existingToken is null)
+        if (token is null)
         {
             _context.StravaTokens.Add(stravaToken);
         }
         else
         {
-            existingToken.AccessToken = stravaToken.AccessToken;
-            existingToken.RefreshToken = stravaToken.RefreshToken;
-            existingToken.ExpiresAt = stravaToken.ExpiresAt;
-            _context.StravaTokens.Update(existingToken);
+            token.AccessToken = stravaToken.AccessToken;
+            token.RefreshToken = stravaToken.RefreshToken;
+            token.ExpiresAt = stravaToken.ExpiresAt;
+            _context.StravaTokens.Update(token);
         }
+
         try
         {
             await _context.SaveChangesAsync();

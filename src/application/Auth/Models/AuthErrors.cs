@@ -9,30 +9,6 @@ namespace Doyep.Analyzer.Application.Auth;
 public static class AuthErrors
 {
     /// <summary>
-    /// Indicates that access was denied during the authentication process, which can occur if the user cancels the authentication flow.
-    /// </summary>
-    public static readonly Error AccessDenied =
-        new("auth.access_denied", "Access denied during the authentication process.", 403);
-
-    /// <summary>
-    /// Indicates that the state parameter is missing or does not match the expected value.
-    /// </summary>
-    public static readonly Error InvalidState =
-        new("auth.invalid_state", "Invalid state parameter.", 400);
-
-    /// <summary>
-    /// Indicates that the scope parameter is invalid.
-    /// </summary>
-    public static readonly Error InvalidScope =
-        new("auth.invalid_scope", "Invalid scope parameter.", 400);
-
-    /// <summary>
-    /// Indicates that the authorization code parameter is missing.
-    /// </summary>
-    public static readonly Error MissingAuthorizationCode =
-        new("auth.missing_authorization_code", "Missing authorization code parameter.", 400);
-
-    /// <summary>
     /// Indicates that an error occurred during the token exchange process with Strava.
     /// </summary>
     public static readonly Error StravaError =

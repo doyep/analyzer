@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 
+using Doyep.Analyzer.Application;
 using Doyep.Analyzer.Application.Athletes;
 using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Domain;
@@ -14,71 +15,79 @@ namespace Doyep.Analyzer.Infrastructure.Auth;
 /// Implements the IRefreshTokenService interface to manage refresh tokens for authenticated athletes.
 /// </summary>
 public class RefreshTokenService(
-    AnalyzerDbContext _context,
-    IAthleteRepository _athleteRepository,
+    AnalyzerDbContext context,
+    IAthleteRepository athleteRepository,
     IOptions<RefreshTokenOptions> options,
-    IRefreshTokenRepository _refreshTokenRepository
+    IRefreshTokenRepository refreshTokenRepository
 ) : IRefreshTokenService
 {
     private readonly RefreshTokenOptions _options = options.Value;
 
     /// <inheritdoc/>
-    public async Task<string> IssueRefreshTokenAsync(long stravaAthleteId, Guid deviceId)
+    public async Task<Result<string, Error>> IssueRefreshTokenAsync(long stravaAthleteId, Guid deviceId)
     {
-        var strategy = _context.Database.CreateExecutionStrategy();
+        var strategy = context.Database.CreateExecutionStrategy();
 
         return await strategy.ExecuteAsync(async () =>
         {
-            using var tx = await _context.Database.BeginTransactionAsync();
+            using var tx = await context.Database.BeginTransactionAsync();
 
-            var currentActiveToken = await _refreshTokenRepository.FindActiveByStravaAthleteIdAndDeviceIdAsync(stravaAthleteId, deviceId);
+            var currentActiveToken = await refreshTokenRepository.FindActiveByStravaAthleteIdAndDeviceIdAsync(stravaAthleteId, deviceId);
             currentActiveToken?.Revoke();
 
-            var rawToken = Generate();
-            var hashedToken = Hash(rawToken);
+            var token = Generate();
+            var hashedToken = Hash(token);
             var refreshToken = RefreshToken.Create(
                 stravaAthleteId,
                 deviceId,
                 hashedToken,
                 DateTimeOffset.UtcNow.AddDays(_options.ExpirationInDays)
             );
-            await _refreshTokenRepository.AddAsync(refreshToken);
-            await tx.CommitAsync();
 
-            return rawToken;
+            try
+            {
+                await refreshTokenRepository.AddAsync(refreshToken);
+                await tx.CommitAsync();
+            }
+            catch (RefreshTokenPersistenceException)
+            {
+                return Result<string, Error>.Failure(RefreshTokenErrors.FailedToPersist);
+            }
+
+            return Result<string, Error>.Success(token);
         });
     }
 
     /// <inheritdoc/>
-    public async Task<RefreshResult> RefreshAsync(string rawToken)
+    public async Task<Result<RefreshResult, Error>> RefreshAsync(string token)
     {
-        var strategy = _context.Database.CreateExecutionStrategy();
+        var strategy = context.Database.CreateExecutionStrategy();
 
         return await strategy.ExecuteAsync(async () =>
         {
-            using var tx = await _context.Database.BeginTransactionAsync();
+            using var tx = await context.Database.BeginTransactionAsync();
 
-            var hashedToken = Hash(rawToken);
-            var currentToken = await _refreshTokenRepository.FindByHashedTokenAsync(hashedToken);
+            var hashedToken = Hash(token);
+            var currentToken = await refreshTokenRepository.FindByHashedTokenAsync(hashedToken);
 
             if (currentToken is null)
-                throw new InvalidOperationException("Invalid refresh token.");
+                return Result<RefreshResult, Error>.Failure(RefreshTokenErrors.InvalidToken);
 
             if (currentToken.RevokedAt is not null)
             {
                 if (currentToken.ReplacedByTokenId is not null)
                 {
-                    await _refreshTokenRepository.RevokeByStravaAthleteIdAndDeviceIdAsync(currentToken.StravaAthleteId, currentToken.DeviceId);
+                    await refreshTokenRepository.RevokeByStravaAthleteIdAndDeviceIdAsync(currentToken.StravaAthleteId, currentToken.DeviceId);
                     await tx.CommitAsync();
 
-                    throw new RefreshTokenReusalException();
+                    return Result<RefreshResult, Error>.Failure(RefreshTokenErrors.ReuseDetected);
                 }
 
-                throw new RefreshTokenRevokedException();
+                return Result<RefreshResult, Error>.Failure(RefreshTokenErrors.RevokedToken);
             }
 
             if (currentToken.IsExpired)
-                throw new RefreshTokenExpiredException();
+                return Result<RefreshResult, Error>.Failure(RefreshTokenErrors.ExpiredToken);
 
             var newRawToken = Generate();
             var newHashedToken = Hash(newRawToken);
@@ -90,20 +99,23 @@ public class RefreshTokenService(
             );
             currentToken.ReplaceWith(newRefreshToken.Id);
 
-            await _refreshTokenRepository.AddAsync(newRefreshToken);
+            await refreshTokenRepository.AddAsync(newRefreshToken);
             await tx.CommitAsync();
 
-            var athlete = await _athleteRepository.FindByStravaAthleteIdAsync(currentToken.StravaAthleteId);
+            // TODO: can we do better than fetching the athlete again here?
+            var athlete = await athleteRepository.FindByStravaAthleteIdAsync(currentToken.StravaAthleteId);
 
-            return new RefreshResult(newRawToken, athlete!);
+            return Result<RefreshResult, Error>.Success(new RefreshResult(athlete!, newRawToken));
         });
     }
 
     /// <inheritdoc/>
-    public async Task RevokeAsync(string refreshToken)
+    public async Task<Result<Error>> RevokeAsync(string refreshToken)
     {
         var hashedToken = Hash(refreshToken);
-        await _refreshTokenRepository.RevokeAsync(hashedToken);
+        await refreshTokenRepository.RevokeAsync(hashedToken);
+
+        return Result<Error>.Success();
     }
 
     /// <summary>
@@ -114,7 +126,11 @@ public class RefreshTokenService(
     private string Generate()
     {
         var randomBytes = RandomNumberGenerator.GetBytes(64);
-        return Convert.ToBase64String(randomBytes);
+
+        return Convert.ToBase64String(randomBytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .Replace("=", "");
     }
 
     /// <summary>
@@ -128,6 +144,7 @@ public class RefreshTokenService(
     {
         using var sha256 = SHA256.Create();
         var hashBytes = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(token));
+
         return Convert.ToBase64String(hashBytes);
     }
 }

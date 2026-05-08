@@ -1,13 +1,11 @@
-using Doyep.Analyzer.Application.Strava;
-using Doyep.Analyzer.Infrastructure;
+using Doyep.Analyzer.Application;
+using Doyep.Analyzer.Application.Auth;
+using Doyep.Analyzer.Application.Security;
 
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-
-namespace Doyep.Analyzer.Api;
+namespace Doyep.Analyzer.Api.Features.Auth;
 
 /// <summary>
-/// Handles the user login process by redirecting to the Strava login page.
+/// Handles the user login process by generating a Strava login URL.
 /// </summary>
 public static class Login
 {
@@ -15,19 +13,54 @@ public static class Login
     {
         app.MapGet("/login", (
             string deviceId,
-            [FromServices] IStravaAuthenticationService stravaService,
-            [FromServices] IOptions<FrontendOptions> frontendOptions) =>
+            string redirectUri,
+            HttpContext context,
+            ILoginService loginService,
+            IStateService stateService) =>
         {
-            var appBaseUrl = frontendOptions.Value.BaseUrl;
+            var stateResult = ValidateQueryParametersAndCreateState(stateService, deviceId, redirectUri);
+            if (stateResult.IsFailure)
+                return Results.BadRequest(new { error = stateResult.Error.Message });
 
-            if (!Guid.TryParse(deviceId, out var deviceGuid))
-                return Results.Redirect($"{appBaseUrl}/error?code=invalid_device_id");
+            var callbackUri = new UriBuilder
+            {
+                Scheme = context.Request.Scheme,
+                Host = context.Request.Host.Host,
+                Port = context.Request.Host.Port ?? -1,
+                Path = Callback.FullPath
+            }.Uri;
 
-            return Results.Redirect(stravaService.GenerateLoginUrl(deviceGuid));
+            var loginUrl = loginService.GenerateStravaLoginUrl(stateResult.Value, callbackUri);
+
+            return Results.Ok(new { url = loginUrl });
         })
-            .WithDescription("Redirects the user to the Strava login page.\n\nRedirections doesnt work in Scalar, you can't test this endpoint in this environment.")
-            .Produces(StatusCodes.Status302Found);
+            .WithDescription("Generates a Strava login URL for the user to initiate the authentication process.")
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status400BadRequest);
 
         return app;
+    }
+
+    /// <summary>
+    /// Validates the query parameters for the login endpoint and creates a state parameter for the Strava login URL.
+    /// This method checks if the device ID is a valid GUID and if the redirect URI is a valid absolute URI. If either
+    /// validation fails, it returns an error result with an appropriate message and status code. If both validations succeed,
+    /// it creates a state parameter using the provided state service and returns it as a success result.
+    /// </summary>
+    /// <param name="stateService" >The state service used to create the state parameter.</param>
+    /// <param name="deviceId">The device ID provided in the query parameters.</param>
+    /// <param name="redirectUri">The redirect URI provided in the query parameters.</param>
+    /// <returns>A result containing either the state parameter or an error.</returns>
+    private static Result<string, Error> ValidateQueryParametersAndCreateState(IStateService stateService, string deviceId, string redirectUri)
+    {
+        if (!Guid.TryParse(deviceId, out var deviceIdParsed))
+            return Result<string, Error>.Failure(new Error("login.invalid_device_id", "Invalid device ID format.", StatusCodes.Status400BadRequest));
+
+        if (!Uri.TryCreate(redirectUri, UriKind.Absolute, out var redirectUriParsed))
+            return Result<string, Error>.Failure(new Error("login.invalid_redirect_uri", "Invalid redirect URI format.", StatusCodes.Status400BadRequest));
+
+        var state = stateService.Create(deviceIdParsed, redirectUriParsed);
+
+        return Result<string, Error>.Success(state);
     }
 }

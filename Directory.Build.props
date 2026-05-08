@@ -3,17 +3,30 @@
   <!-- 🌍 Global settings -->
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <DoyepAnalyzerUserSecretsId>b0c1b94d-34a6-459e-9765-9ae81e53ee13</DoyepAnalyzerUserSecretsId>
 
+    <!-- ⚙️ C# -->
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
     <!-- 🔍 Quality -->
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
     <AnalysisLevel>latest</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 
     <!-- 🧹 Build -->
     <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+
+    <!-- 📦 NuGet -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+    <!-- 📄 Docs -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- 🚀 Perf -->
+    <TieredCompilation>true</TieredCompilation>
+    <TieredPGO>true</TieredPGO>
   </PropertyGroup>
 
   <ItemGroup>

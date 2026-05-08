@@ -20,7 +20,7 @@ public static class Refresh
             [FromServices] IAuthCookieService _cookieService,
             [FromServices] IAuthService _authService) =>
         {
-            httpContext.Request.Cookies.TryGetValue(CookieConstants.RefreshToken, out var refreshToken);
+            httpContext.Request.Cookies.TryGetValue(AuthCookieConstants.RefreshToken, out var refreshToken);
 
             if (string.IsNullOrEmpty(refreshToken))
                 return Results.BadRequest(new { error = "Invalid RefreshToken." });

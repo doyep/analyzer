@@ -16,24 +16,24 @@ public class AuthCookieService(
     public void SetAuthCookies(HttpContext context, string jwt, string refreshToken)
     {
         var jwtExpiration = DateTimeOffset.UtcNow.AddMinutes(_jwtOptions.ExpirationInMinutes);
-        context.Response.Cookies.Append(CookieConstants.AccessToken, jwt, GetCookieOptions(jwtExpiration));
+        context.Response.Cookies.Append(AuthCookieConstants.AccessToken, jwt, GetCookieOptions(jwtExpiration));
 
         var refreshTokenExpiration = DateTimeOffset.UtcNow.AddDays(_refreshTokenOptions.ExpirationInDays);
-        context.Response.Cookies.Append(CookieConstants.RefreshToken, refreshToken, GetCookieOptions(refreshTokenExpiration));
+        context.Response.Cookies.Append(AuthCookieConstants.RefreshToken, refreshToken, GetCookieOptions(refreshTokenExpiration));
     }
 
     /// <inheritdoc/>
     public void ClearAuthCookies(HttpContext context)
     {
-        context.Response.Cookies.Append(CookieConstants.AccessToken, string.Empty, GetCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
+        context.Response.Cookies.Append(AuthCookieConstants.AccessToken, string.Empty, GetCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
 
-        context.Response.Cookies.Append(CookieConstants.RefreshToken, string.Empty, GetCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
+        context.Response.Cookies.Append(AuthCookieConstants.RefreshToken, string.Empty, GetCookieOptions(DateTimeOffset.UtcNow.AddDays(-1)));
     }
 
     /// <inheritdoc/>
     public string? TryGetRefreshToken(HttpContext context)
     {
-        context.Request.Cookies.TryGetValue(CookieConstants.RefreshToken, out var refreshToken);
+        context.Request.Cookies.TryGetValue(AuthCookieConstants.RefreshToken, out var refreshToken);
 
         return refreshToken;
     }
@@ -50,7 +50,7 @@ public class AuthCookieService(
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Lax,
+            SameSite = SameSiteMode.None,
             Expires = expires
         };
     }

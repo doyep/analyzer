@@ -1,21 +1,11 @@
 namespace Doyep.Analyzer.Application.Athletes;
 
 /// <summary>
-/// Represents duplicate athlete exception, thrown when an athlete already exists in the repository.
+/// Represents athlete persistence exception, thrown when an error occurs while saving or updating an athlete in the repository.
 /// </summary>
-public class DuplicateAthleteException : Exception
+public class AthletePersistenceException : Exception
 {
-    public DuplicateAthleteException(long stravaAthleteId) : base($"An athlete with Strava ID {stravaAthleteId} already exists.")
-    {
-    }
-}
-
-/// <summary>
-/// Represents athlete not found exception, thrown when an attempt is made to access an athlete that does not exist in the repository.
-/// </summary>
-public class AthleteNotFoundException : Exception
-{
-    public AthleteNotFoundException(long stravaAthleteId) : base($"No athlete found with Strava ID {stravaAthleteId}.")
+    public AthletePersistenceException(long stravaAthleteId) : base($"An error occurred while saving or updating the athlete with Strava ID {stravaAthleteId}.")
     {
     }
 }

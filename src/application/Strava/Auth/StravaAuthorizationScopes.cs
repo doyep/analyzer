@@ -1,9 +1,9 @@
-namespace Doyep.Analyzer.Application.Auth;
+namespace Doyep.Analyzer.Application.Strava;
 
 /// <summary>
 /// Utility class to validate if the scopes granted by the user include all the required scopes for the application to works properly.
 /// </summary>
-public static class ScopeValidator
+public static class StravaAuthorizationScopes
 {
     /// <summary>
     /// The list of scopes required by the application to works properly.
@@ -23,7 +23,19 @@ public static class ScopeValidator
     /// <returns>True if all the required scopes are included in the granted scopes, false otherwise.</returns>
     public static bool HasRequiredScope(string scopesRaw)
     {
-        var scopes = scopesRaw.Split(',');
-        return RequiredScopes.All(scopes.Contains);
+        var scopes = scopesRaw
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => s.Trim())
+            .ToArray();
+
+        return RequiredScopes.All(required =>
+            scopes.Any(scope => string.Equals(scope, required, StringComparison.OrdinalIgnoreCase))
+        );
     }
+
+    /// <summary>
+    /// Joins the required scopes into a single string separated by commas, to be used in the authorization URL.
+    /// </summary>
+    /// <returns>A string containing all the required scopes separated by commas.</returns>
+    public static string JoinRequiredScopes() => string.Join(",", RequiredScopes);
 }

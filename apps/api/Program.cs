@@ -5,15 +5,16 @@ using Doyep.Analyzer.Infrastructure;
 
 using Scalar.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication
+    .CreateBuilder(args)
+    .AddDefaultHealthChecks();
 
 // Add services to the container.
 builder.Services
     .AddApi()
     .AddApplication()
     .AddInfrastructure()
-    .AddJwtAuthentication()
-    .AddReverseProxy(builder.Configuration);
+    .AddJwtAuthentication();
 
 // TODO : Properly configure Policies
 builder.Services
@@ -37,9 +38,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapDefaultEndpoints();
 app.MapAuthEndpoints();
-app.MapApiEndpoints();
-
-app.MapReverseProxy();
 
 app.Run();

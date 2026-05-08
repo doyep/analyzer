@@ -4,17 +4,20 @@ using Doyep.Analyzer.Domain;
 namespace Doyep.Analyzer.Application.Athletes;
 
 /// <summary>
-/// Defines the contract for managing athlete authentication and profile data.
+/// Provides services for managing athlete authentication and profile data.
 /// </summary>
 public interface IAthleteService
 {
     /// <summary>
-    /// Ensures that an athlete exists in the database based on the provided Strava summary athlete information.
-    /// If the athlete does not exist, it will be created.
-    /// If the athlete already exists, their profile information will be updated.
-    /// The method also checks if the athlete has access to the application.
+    /// Ensures that an athlete exists in the system based on the provided Strava athlete data.
+    /// If the athlete does not exist, it creates a new athlete. If the athlete already exists,
+    /// it updates the existing record with the latest profile information from Strava.
+    /// This method is used during the authentication process to ensure that the athlete's information
+    /// is up-to-date and that the athlete is registered in the system. It returns the athlete entity that
+    /// corresponds to the provided Strava athlete data, whether it was newly created or already existed.
     /// </summary>
     /// <param name="stravaAthlete">The Strava summary athlete information.</param>
-    /// <returns>A result containing the athlete if successful, or an error if the athlete is not authorized or if there was an issue with finding or creating the athlete.</returns>
-    Task<Result<Athlete, Error>> GetAuthorizedAthleteAsync(StravaSummaryAthlete stravaAthlete);
+    /// <returns>The athlete entity corresponding to the provided Strava athlete data, whether it was newly created or already existed.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when there is an issue finding or creating the athlete based on the provided Strava athlete data.</exception>
+    Task<Athlete> EnsureAthleteAsync(StravaSummaryAthlete stravaAthlete);
 }

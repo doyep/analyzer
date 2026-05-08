@@ -29,6 +29,7 @@ public interface IRefreshTokenRepository
     /// </summary>
     /// <param name="refreshToken">The refresh token to add.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
+    /// <exception cref="RefreshTokenPersistenceException">Thrown when there is an error while persisting the refresh token to the database.</exception>
     Task AddAsync(RefreshToken refreshToken);
 
     /// <summary>

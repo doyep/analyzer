@@ -24,7 +24,7 @@ public static class StravaExtensions
 
         services.AddSingleton<IValidateOptions<StravaOptions>, StravaOptionsValidator>();
 
-        services.AddHttpClient<IStravaAuthenticationService, StravaAuthenticationService>((client) =>
+        services.AddHttpClient<IStravaAuthService, StravaAuthService>((client) =>
         {
             client.BaseAddress = new Uri(StravaEndpoints.BaseUrl);
         });

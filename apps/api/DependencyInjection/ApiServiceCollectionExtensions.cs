@@ -13,7 +13,6 @@ public static class ApiServiceCollectionExtensions
     public static IServiceCollection AddApi(this IServiceCollection services)
     {
         services.AddScoped<IAuthCookieService, AuthCookieService>();
-        services.AddScoped<ICallbackValidator, CallbackValidator>();
 
         return services;
     }

@@ -13,7 +13,7 @@ public interface IRefreshTokenService
     /// <param name="deviceId">The device ID for which to issue the refresh token.</param>
     /// <returns>The newly issued refresh token.</returns>
     /// <exception cref="RefreshTokenPersistenceException">Thrown when there is an error while persisting the refresh token to the database.</exception>
-    Task<string> IssueRefreshTokenAsync(long stravaAthleteId, Guid deviceId);
+    Task<Result<string, Error>> IssueRefreshTokenAsync(long stravaAthleteId, Guid deviceId);
 
     /// <summary>
     /// Refreshes an access token using the provided raw refresh token. This method validates the refresh token, checks if it is active, and if valid, generates a new access token.
@@ -21,7 +21,7 @@ public interface IRefreshTokenService
     /// </summary>
     /// <param name="rawToken">The raw refresh token to use for refreshing the access token.</param>
     /// <returns>The result of the refresh operation, including the new refresh token and associated athlete.</returns>
-    Task<RefreshResult> RefreshAsync(string rawToken);
+    Task<Result<RefreshResult, Error>> RefreshAsync(string rawToken);
 
     /// <summary>
     /// Attempts to revoke the specified refresh token. This method checks if the provided refresh token exists and is active, and if so, it revokes the token to prevent further use. If the token does not exist or is already revoked,
@@ -29,5 +29,5 @@ public interface IRefreshTokenService
     /// </summary>
     /// <param name="refreshToken">The refresh token to revoke.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task RevokeAsync(string refreshToken);
+    Task<Result<Error>> RevokeAsync(string refreshToken);
 }
