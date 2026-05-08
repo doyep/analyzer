@@ -16,6 +16,12 @@ namespace Doyep.Analyzer.Api.Features.Auth;
 /// </summary>
 public static class Callback
 {
+    /// <summary>
+    /// The full route for the callback endpoint, which is "/auth/callback". This is the URL that Strava will redirect to after the user authorizes the application,
+    /// and it should match the redirect URI configured in the Strava API settings for this application.
+    /// </summary>
+    public static string FullPath => "/auth/callback";
+
     public static IEndpointRouteBuilder MapCallbackEndpoint(this IEndpointRouteBuilder app)
     {
         _ = app.MapGet("/callback", async (

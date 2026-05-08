@@ -2,7 +2,7 @@ using Doyep.Analyzer.Application;
 using Doyep.Analyzer.Application.Auth;
 using Doyep.Analyzer.Application.Security;
 
-namespace Doyep.Analyzer.Api;
+namespace Doyep.Analyzer.Api.Features.Auth;
 
 /// <summary>
 /// Handles the user login process by generating a Strava login URL.
@@ -27,7 +27,7 @@ public static class Login
                 Scheme = context.Request.Scheme,
                 Host = context.Request.Host.Host,
                 Port = context.Request.Host.Port ?? -1,
-                Path = "/auth/callback"
+                Path = Callback.FullPath
             }.Uri;
 
             var loginUrl = loginService.GenerateStravaLoginUrl(stateResult.Value, callbackUri);

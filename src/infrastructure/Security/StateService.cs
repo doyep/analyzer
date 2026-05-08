@@ -25,11 +25,10 @@ public class StateService(
     /// <inheritdoc/>
     public string Create(Guid deviceId, Uri redirectUri)
     {
-        var payload = new StatePayload
+        var payload = new AuthState
         {
             DeviceId = deviceId,
             RedirectUri = redirectUri,
-            ExpiresAt = DateTimeOffset.UtcNow.AddMinutes(_options.ExpirationInMinutes)
         };
 
         var json = JsonSerializer.Serialize(payload);
@@ -38,21 +37,21 @@ public class StateService(
     }
 
     /// <inheritdoc/>
-    public Result<StatePayload, Error> Consume(string state)
+    public Result<AuthState, Error> Consume(string state)
     {
         try
         {
             var json = _protector.Unprotect(state);
-            var payload = JsonSerializer.Deserialize<StatePayload>(json);
+            var payload = JsonSerializer.Deserialize<AuthState>(json);
 
             if (payload is null || payload.ExpiresAt < DateTimeOffset.UtcNow)
-                return Result<StatePayload, Error>.Failure(LoginErrors.InvalidState);
+                return Result<AuthState, Error>.Failure(LoginErrors.InvalidState);
 
-            return Result<StatePayload, Error>.Success(payload);
+            return Result<AuthState, Error>.Success(payload);
         }
         catch
         {
-            return Result<StatePayload, Error>.Failure(LoginErrors.InvalidState);
+            return Result<AuthState, Error>.Failure(LoginErrors.InvalidState);
         }
     }
 }

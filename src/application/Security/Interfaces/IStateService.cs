@@ -23,5 +23,5 @@ public interface IStateService
     /// </summary>
     /// <param name="state">The state token to consume.</param>
     /// <returns>The result of the state consumption, containing either the associated device information or an error.</returns>
-    Result<StatePayload, Error> Consume(string state);
+    Result<AuthState, Error> Consume(string state);
 }

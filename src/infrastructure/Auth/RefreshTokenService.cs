@@ -127,7 +127,10 @@ public class RefreshTokenService(
     {
         var randomBytes = RandomNumberGenerator.GetBytes(64);
 
-        return Convert.ToBase64String(randomBytes);
+        return Convert.ToBase64String(randomBytes)
+            .Replace("+", "-")
+            .Replace("/", "_")
+            .Replace("=", "");
     }
 
     /// <summary>
